@@ -1,5 +1,5 @@
 (function() {
-    angular.module('app', [])
+    angular.module('app', ['ui.router', 'LocalStorageModule'])
         .constant('config', {
             site: 'Argus'
         })
@@ -23,27 +23,14 @@
                 url: "",
                 abstract: true,
                 controller: 'ApplicationCtrl',
-                views: {
-                    "header@": {
-                        templateUrl: "app/header/header.template.html",
-                        controller: "HeaderCtrl"
-                    },
-                    "footer@": {
-                        templateUrl: "app/footer/footer.template.html",
-                        controller: "FooterCtrl"
-                    }
-                }
+                template: '<ui-view />'
             });
 
             $stateProvider.state("home", {
                 parent: "init",
                 url: "/",
-                views: {
-                    "content@": {
-                        templateUrl: "app/home/home.template.html",
-                        controller: "HomeCtrl"
-                    }
-                }
+                controller: "HomeCtrl",
+                templateUrl: "app/home/home.template.html"
             });
         }]);
 })();

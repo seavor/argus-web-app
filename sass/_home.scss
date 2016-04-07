@@ -1,8 +1,14 @@
 .home-page {
-  text-align: center;
-  padding: 200px 50px;
+  height: 100%;
+  position: relative;
 
   h1 {
-    font-size: 3rem;
+    font-family: sans-serif;
+    font-size: 25vmin;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-transform: uppercase;
   }
 }
