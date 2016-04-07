@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html ng-app="app">
+  <head>
+    <base href="/" >
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0">
+    <title ng-bind="app.title">Loading..</title>
+    <!-- css files -->
+    <link rel="stylesheet" type="text/css" href="css/styles.css">
+    <!-- /css files -->
+    <!-- vendor files -->
+    <script type="text/javascript" src="node_modules/angular/angular.min.js"></script>
+    <script type="text/javascript" src="node_modules/angular-ui-router/release/angular-ui-router.min.js"></script>
+    <script type="text/javascript" src="node_modules/angular-local-storage/dist/angular-local-storage.min.js"></script>
+    <!-- /vendor files -->
+    <!-- app files -->
+    <script type="text/javascript" src="js/app.js"></script>
+    <script type="text/javascript" src="js/app.controller.js"></script>
+    <script type="text/javascript" src="js/app.run.js"></script>
+    <script type="text/javascript" src="js/app.templates.js"></script>
+    <script type="text/javascript" src="js/footer/footer.controller.js"></script>
+    <script type="text/javascript" src="js/header/header.controller.js"></script>
+    <script type="text/javascript" src="js/home/home.controller.js"></script>
+    <!-- /app files -->
+  </head>
+  <body>
+    <header class="header" ui-view="header"></header>
+    <div class="content" ui-view="content"></div>
+    <footer class="footer" ui-view="footer"></footer>
+    <script src="//localhost:35729/livereload.js"></script>
+  </body>
+</html>
