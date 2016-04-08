@@ -16,7 +16,11 @@
 
             // If we did not find a valid url, redirect to home page
             $urlRouterProvider.otherwise(function($injector, $location) {
-                return '/';
+                if (!$injector.get('localStorageService').get('splashed')) {
+                    return '/initializer';
+                } else {
+                    return '/';
+                }
             });
 
             $stateProvider.state("init", {
@@ -26,11 +30,18 @@
                 template: '<ui-view />'
             });
 
-            $stateProvider.state("home", {
+            $stateProvider.state("initializer", {
+                parent: "init",
+                url: "/initializer",
+                controller: "InitializerCtrl",
+                templateUrl: "app/initializer/initializer.template.html"
+            });
+
+            $stateProvider.state("dashboard", {
                 parent: "init",
                 url: "/",
-                controller: "HomeCtrl",
-                templateUrl: "app/home/home.template.html"
+                controller: "DashboardCtrl",
+                templateUrl: "app/dashboard/dashboard.template.html"
             });
         }]);
 })();

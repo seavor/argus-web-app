@@ -9,4 +9,15 @@ body {
   font-family: $font-stack;
   color: map-get($white, solid);
   background: map-get($black, solid);
+  position: relative;
+
+  h1 {
+    font-family: $special-font;
+    font-size: 25vmin;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-transform: lowercase;
+  }
 }

@@ -5,7 +5,11 @@
         $locationProvider.html5Mode(true);
         localStorageServiceProvider.setNotify(false).setPrefix(config.site).setStorageCookieDomain(window.location);
         $urlRouterProvider.otherwise(function($injector, $location) {
-            return "/";
+            if (!$injector.get("localStorageService").get("splashed")) {
+                return "/initializer";
+            } else {
+                return "/";
+            }
         });
         $stateProvider.state("init", {
             url: "",
@@ -13,11 +17,17 @@
             controller: "ApplicationCtrl",
             template: "<ui-view />"
         });
-        $stateProvider.state("home", {
+        $stateProvider.state("initializer", {
+            parent: "init",
+            url: "/initializer",
+            controller: "InitializerCtrl",
+            templateUrl: "app/initializer/initializer.template.html"
+        });
+        $stateProvider.state("dashboard", {
             parent: "init",
             url: "/",
-            controller: "HomeCtrl",
-            templateUrl: "app/home/home.template.html"
+            controller: "DashboardCtrl",
+            templateUrl: "app/dashboard/dashboard.template.html"
         });
     } ]);
 })();
