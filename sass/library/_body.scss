@@ -6,6 +6,7 @@ body,
 
 body {
   font-size: 16px;
+  font-family: $font-stack;
   color: map-get($white, solid);
   background: map-get($black, solid);
 }

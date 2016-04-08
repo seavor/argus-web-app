@@ -3,12 +3,12 @@
   position: relative;
 
   h1 {
-    font-family: sans-serif;
+    font-family: $special-font;
     font-size: 25vmin;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    text-transform: uppercase;
+    text-transform: lowercase;
   }
 }
