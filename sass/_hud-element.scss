@@ -12,10 +12,10 @@
   }
 
   &-border {
-    border: 10px solid blue;
+    background-size: cover;
   }
 
   &-directive {
-    border: 3px solid yellow;
+    z-index: 1;
   }
 }

@@ -51,10 +51,8 @@
   .body-suit,
   .video-feed {
     float: left;
-    min-height: 500px;
 
     &-animation {
-      border: 1px solid red;
       height: 50px;
     }
   }
@@ -91,7 +89,7 @@
 
     &-thumbnails {
       clear: both;
-      height: 100px;
+      height: 150px;
       border: 1px solid green;
     }
   }

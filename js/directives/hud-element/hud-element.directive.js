@@ -4,10 +4,11 @@
             restrict: "E",
             replace: true,
             transclude: true,
-            templateUrl: "app/directives/hud-element.template.html",
+            templateUrl: "app/directives/hud-element/hud-element.template.html",
             link: linker,
             scope: {
-                border: "="
+                border: "=",
+                cover: "="
             }
         };
         return directive;
