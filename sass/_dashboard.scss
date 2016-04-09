@@ -6,6 +6,7 @@
     width: 100%;
     padding: $sm-spacer $lg-spacer;
     font-family: $secondary-font;
+    font-weight: 200;
     font-size: 2.5vw;
     background-image: url(../images/map.svg);
     background-size: auto 80%;
@@ -14,6 +15,7 @@
 
     a {
       font-family: $special-font;
+      font-weight: normal;
       vertical-align: middle;
 
       &::after {
@@ -77,14 +79,14 @@
     }
 
     &-directive {
-      width: calc(90% - 2.5vw);
-      padding-right: 2.5vw;
+      width: 85%;
       padding-bottom: 58.15%;
       margin-bottom: 3%;
     }
 
     &-animation {
-      width: 10%;
+      width: 15%;
+      padding-left: 2.5vw;
     }
 
     &-thumbnails {
@@ -107,9 +109,12 @@
       }
     }
 
-    .body-suit
-    .video-feed-directive {
+    .body-suit {
       padding-right: 25px;
+    }
+
+    .video-feed-animatio {
+      padding-left: 25px;
     }
   }
 }
