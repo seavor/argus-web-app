@@ -9,11 +9,8 @@
         return directive;
         function linker(scope, elem, attrs) {
             console.log("Initializing Body Suit: ", scope);
-            var scene = new THREE.Scene(), group = new THREE.Object3D(), mouse = new THREE.Vector2(), renderer = new THREE.WebGLRenderer(), raycaster = new THREE.Raycaster(), camera, INTERSECTED, CANVAS_WIDTH, CANVAS_HEIGHT, CANVAS_OFFSETX, CANVAS_OFFSETY, targetRotationX = 0, targetRotationOnMouseDownX = 0, mouseX = 0, mouseXOnMouseDown = 0, mouseIsDown = false, windowHalfX, container;
-            $timeout(function init() {
-                initCanvas();
-                animate();
-            });
+            var scene = new THREE.Scene(), group = new THREE.Object3D(), mouse = new THREE.Vector2(), renderer = new THREE.WebGLRenderer(), raycaster = new THREE.Raycaster(), camera, mesh, container, INTERSECTED, CANVAS_WIDTH, CANVAS_HEIGHT, CANVAS_OFFSETX, CANVAS_OFFSETY, targetRotationX = 0, targetRotationOnMouseDownX = 0, mouseX = 0, mouseXOnMouseDown = 0, mouseIsDown = false, windowHalfX;
+            $timeout(init);
             document.addEventListener("mousemove", onDocumentMouseMove, false);
             document.addEventListener("mousedown", onDocumentMouseDown, false);
             document.addEventListener("touchstart", onDocumentTouchStart, false);
@@ -25,8 +22,9 @@
                 document.removeEventListener("touchstart", onDocumentTouchStart, false);
                 document.removeEventListener("touchmove", onDocumentTouchMove, false);
                 window.removeEventListener("resize", onWindowResize, false);
+                animate = noop;
             });
-            function initCanvas() {
+            function init() {
                 container = elem[0];
                 CANVAS_WIDTH = container.offsetWidth;
                 CANVAS_HEIGHT = container.offsetHeight;
@@ -44,6 +42,7 @@
                 renderer.sortObjects = false;
                 container.appendChild(renderer.domElement);
                 loadData(group, scene);
+                animate();
             }
             function setMousePosition(clientX, clientY) {
                 var normalizedX, normalizedY;
@@ -62,7 +61,6 @@
             function loadData(group, scene) {
                 var manager = new THREE.LoadingManager(), loader = new THREE.OBJLoader(manager);
                 loader.load("obj/argus.obj", function(object) {
-                    console.log(object);
                     object.traverse(function(child) {
                         if (child instanceof THREE.Mesh) {
                             child.material = new THREE.MeshBasicMaterial({
@@ -76,7 +74,6 @@
                     group.add(object);
                 }, onProgress, onError);
                 loader.load("obj/argus2.obj", function(object) {
-                    console.log(object);
                     object.traverse(function(child) {
                         if (child instanceof THREE.Mesh) {
                             child.material = new THREE.MeshBasicMaterial({
@@ -91,7 +88,6 @@
                     group.add(object);
                 }, onProgress, onError);
                 loader.load("obj/eyes.obj", function(object) {
-                    console.log(object);
                     object.traverse(function(child) {
                         if (child instanceof THREE.Mesh) {
                             child.material = new THREE.MeshBasicMaterial({
@@ -109,6 +105,7 @@
                 }, onProgress, onError);
             }
             function render() {
+                console.info("Render..");
                 var intersects;
                 group.rotation.y += (targetRotationX - group.rotation.y) * .1;
                 raycaster.setFromCamera(mouse, camera);
@@ -193,6 +190,9 @@
                 }
             }
             function onError(xhr) {}
+            function noop() {
+                return null;
+            }
         }
     } ]);
 })();

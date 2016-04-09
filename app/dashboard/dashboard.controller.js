@@ -7,6 +7,14 @@
             }
 
             console.log('Initializing Dashboard: ', $scope);
+
+            $scope.thumbnails = [
+              {
+                id: 1,
+                label: 'right leg',
+                src: 'cam-thumb.png'
+              }
+            ];
         }
     ]);
 })();

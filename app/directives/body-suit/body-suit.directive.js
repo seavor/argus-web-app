@@ -20,7 +20,11 @@
                     mouse = new THREE.Vector2(),
                     renderer = new THREE.WebGLRenderer(),
                     raycaster = new THREE.Raycaster(),
+
                     camera,
+                    mesh,
+
+                    container,
 
                     INTERSECTED,
 
@@ -38,14 +42,9 @@
 
                     mouseIsDown = false,
 
-                    windowHalfX,
+                    windowHalfX;
 
-                    container;
-
-                $timeout(function init() {
-                    initCanvas();
-                    animate();
-                });
+                $timeout(init);
 
                 /*************************************************/
                 /* Scope Event Listeners
@@ -62,21 +61,22 @@
 
                 // Clean up event listeners when scope view changes
                 scope.$on('$destroy', function() {
-                    // mouse and touch listeners
                     document.removeEventListener('mousemove', onDocumentMouseMove, false);
                     document.removeEventListener('mousedown', onDocumentMouseDown, false);
                     document.removeEventListener('touchstart', onDocumentTouchStart, false);
                     document.removeEventListener('touchmove', onDocumentTouchMove, false);
 
-                    // window resize listener
                     window.removeEventListener('resize', onWindowResize, false);
+
+                    // void recursive rendering method
+                    animate = noop;
                 });
 
                 /*************************************************/
                 /* Canvas Methods
                 /*************************************************/
 
-                function initCanvas() {
+                function init() {
                     container = elem[0];
 
                     CANVAS_WIDTH = container.offsetWidth;
@@ -106,6 +106,8 @@
                     container.appendChild(renderer.domElement);
 
                     loadData(group, scene);
+
+                    animate();
                 }
 
                 // normalize mouse position for intersection
@@ -135,7 +137,6 @@
 
                     // wireframe argus
                     loader.load('obj/argus.obj', function(object) {
-                        console.log(object);
                         object.traverse(function(child) {
                             if (child instanceof THREE.Mesh) {
                                 child.material = new THREE.MeshBasicMaterial({ color: 0xedece8, wireframe: true, wireframeLinewidth: 0.5 });
@@ -143,12 +144,12 @@
                         });
 
                         object.position.y = 8;
+
                         group.add(object);
                     }, onProgress, onError);
 
                     // internal solid argus
                     loader.load('obj/argus2.obj', function(object) {
-                        console.log(object);
                         object.traverse(function(child) {
                             if (child instanceof THREE.Mesh) {
                                 child.material = new THREE.MeshBasicMaterial({ color: 0x222222 });
@@ -159,12 +160,12 @@
                         });
 
                         object.position.y = 8;
+
                         group.add(object);
                     }, onProgress, onError);
 
                     // eyes -- to be replaced
                     loader.load('obj/eyes.obj', function(object) {
-                        console.log(object);
                         object.traverse(function(child) {
                             if (child instanceof THREE.Mesh) {
                                 child.material = new THREE.MeshBasicMaterial({ color: 0xffffff });
@@ -176,6 +177,7 @@
 
                         object.position.y = 3;
                         object.position.z = 0.5;
+
                         group.add(object);
                         scene.add(group);
                     }, onProgress, onError);
@@ -183,6 +185,7 @@
 
                 // render scene
                 function render() {
+                    console.info('Render..');
                     var intersects;
 
                     //horizontal rotation
@@ -226,11 +229,8 @@
                 }
 
                 function animate() {
-
                     requestAnimationFrame(animate);
-
                     render();
-
                 }
 
                 /*************************************************/
@@ -338,6 +338,8 @@
                 }
 
                 function onError(xhr) {}
+
+                function noop() {return null; }
             }
         }
     ]);

@@ -6,7 +6,8 @@
     "angular-ui-router": "~0.2.0",
     "angular-local-storage": "~0.2.7",
     "three": "~0.75.0",
-    "three-obj-loader": "~1.0.2"
+    "three-obj-loader": "~1.0.2",
+    "ajpng": "~0.1.2"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

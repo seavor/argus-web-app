@@ -21,13 +21,21 @@
         <!-- <video-feed></video-feed> -->
       </hud-element>
       <hud-animation class="video-feed-animation" src="'images/right-hud.png'"></hud-animation>
-      <hud-element class="video-feed-thumbnails" border="'images/borders/thumbnails.gif'" content-position="'
+      <hud-element class="video-feed-thumbnails" border="'images/borders/thumbnails.png'" content-position="'
         width: 85%;
         height: 50%;
         top: 20%;
         left: 1%;
       '">
-        @TODO: Thumbnails
+        <div class="thumbnails">
+          <div class="thumbnails-track">
+            <hud-element
+              class="thumbnails-item"
+              border="'images/borders/thumbnail.png'"
+              ng-repeat="thumbnail in thumbnails">
+            </hud-element>
+          </div>
+        </div>
       </hud-element>
     </div>
   </div>

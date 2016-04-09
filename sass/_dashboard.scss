@@ -105,6 +105,23 @@
     }
   }
 
+  .thumbnails {
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+    background-color: black;
+    border: 1px solid white;
+
+    &-track {
+      height: 100%;
+      min-width: 100%;
+    }
+
+    &-item {
+      border: 1px solid red;
+    }
+  }
+
   @media (max-width: $min-content-width) {
     &-header {
       font-size: 24px;
