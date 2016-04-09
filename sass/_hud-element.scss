@@ -1,6 +1,5 @@
 .hud-element {
   position: relative;
-  border: 1px solid white;
 
   &-border,
   &-directive {
@@ -16,6 +15,7 @@
   }
 
   &-directive {
+    background: rgba(map-get($white, solid), .2);
     z-index: 1;
   }
 }

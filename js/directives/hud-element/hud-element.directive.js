@@ -8,7 +8,8 @@
             link: linker,
             scope: {
                 border: "=",
-                cover: "="
+                cover: "=",
+                contentPosition: "="
             }
         };
         return directive;

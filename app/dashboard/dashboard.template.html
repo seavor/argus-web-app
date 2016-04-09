@@ -6,17 +6,29 @@
   </div>
   <div class="home-page-content">
     <div class="body-suit">
-      <hud-element class="body-suit-directive" border="'images/borders/suit.svg'">
+      <hud-element class="body-suit-directive" border="'images/borders/suit.svg'" content-position="'
+        width: 60%;
+        height: 75%;
+        top: 14%;
+        left: 18%;
+      '">
         <body-suit></body-suit>
       </hud-element>
       <hud-animation class="body-suit-animation" src="'images/bottom-hud.svg'"></hud-animation>
     </div>
     <div class="video-feed">
-      <hud-element class="video-feed-directive" cover>
+      <hud-element class="video-feed-directive" border="'images/borders/video.svg'" cover>
         <video-feed></video-feed>
       </hud-element>
       <hud-animation class="video-feed-animation" src="'images/right-hud.png'"></hud-animation>
-      <hud-element class="video-feed-thumbnails" border="'images/borders/thumbnails.svg'">@TODO: Thumbnails</hud-element>
+      <hud-element class="video-feed-thumbnails" border="'images/borders/thumbnails.svg'" content-position="'
+        width: 85%;
+        height: 50%;
+        top: 20%;
+        left: 1%;
+      '">
+        @TODO: Thumbnails
+      </hud-element>
     </div>
   </div>
 </div>

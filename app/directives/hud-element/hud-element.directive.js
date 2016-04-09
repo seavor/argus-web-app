@@ -9,7 +9,8 @@
               link: linker,
               scope: {
                 border: '=',
-                cover: '='
+                cover: '=',
+                contentPosition: '='
               }
             };
 
