@@ -1,0 +1,21 @@
+.hud-element {
+  position: relative;
+  border: 1px solid white;
+
+  &-border,
+  &-directive {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+  }
+
+  &-border {
+    border: 10px solid blue;
+  }
+
+  &-directive {
+    border: 3px solid yellow;
+  }
+}

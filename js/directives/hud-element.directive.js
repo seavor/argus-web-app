@@ -1,0 +1,18 @@
+(function() {
+    angular.module("app").directive("hudElement", [ "$state", "$timeout", "localStorageService", function($state, $timeout, localStorageService) {
+        var directive = {
+            restrict: "E",
+            replace: true,
+            transclude: true,
+            templateUrl: "app/directives/hud-element.template.html",
+            link: linker,
+            scope: {
+                border: "="
+            }
+        };
+        return directive;
+        function linker(scope, elem, attrs) {
+            console.log("Initializing Hud Element: ", scope);
+        }
+    } ]);
+})();

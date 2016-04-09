@@ -3,7 +3,6 @@
   position: relative;
 
   &-header {
-    background-color: rgba(map-get($white, solid), .1);
     width: 100%;
     padding: $sm-spacer $lg-spacer;
     font-family: $secondary-font;
@@ -45,7 +44,6 @@
 
   &-content {
     @extend .clearfix;
-    background-color: rgba(map-get($white, solid), .2);
     min-height: 500px;
     padding: 0 $lg-spacer $md-spacer;
   }
@@ -55,30 +53,6 @@
     float: left;
     min-height: 500px;
 
-    &-wrapper {
-      height: 100%;
-      position: relative;
-
-      border: 1px solid black;
-    }
-
-    &-hud,
-    &-directive {
-      position: absolute;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: 100%;
-    }
-
-    &-hud {
-      border: 10px solid blue;
-    }
-
-    &-directive {
-      border: 3px solid yellow;
-    }
-
     &-animation {
       border: 1px solid red;
       height: 50px;
@@ -86,10 +60,10 @@
   }
 
   .body-suit {
-    width: 25%;
+    width: 30%;
     padding-right: 2.5vw;
 
-    &-wrapper {
+    &-directive {
       padding-bottom: 167%;
       margin-bottom: 8%;
     }
@@ -97,18 +71,18 @@
 
   .video-feed {
     @extend .clearfix;
-    width: 75%;
+    width: 70%;
 
-    &-wrapper,
+    &-directive,
     &-animation {
       float: left;
     }
 
-    &-wrapper {
-      width: 90%;
+    &-directive {
+      width: calc(90% - 2.5vw);
       padding-right: 2.5vw;
       padding-bottom: 58.15%;
-      margin-bottom: 8%;
+      margin-bottom: 3%;
     }
 
     &-animation {
@@ -136,7 +110,7 @@
     }
 
     .body-suit
-    .video-feed-wrapper {
+    .video-feed-directive {
       padding-right: 25px;
     }
   }
