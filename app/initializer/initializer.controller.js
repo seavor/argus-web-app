@@ -6,7 +6,7 @@
             $timeout(function() {
               localStorageService.set('splashed', (new Date().getTime()));
               $state.go('dashboard');
-            }, 3000);
+            }, 5000);
         }
     ]);
 })();

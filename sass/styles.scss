@@ -1,5 +1,6 @@
 // Resets & Frameworks
 @import 'library/reset';
+@import 'library/normalize';
 
 // Library Files (order specific)
 @import 'library/fonts';
@@ -15,4 +16,5 @@
 // components
 
 // views
+@import 'initializer';
 @import 'dashboard';

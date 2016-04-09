@@ -1,4 +1,53 @@
 .home-page {
   height: 100%;
   position: relative;
+
+  &-header {
+    width: 100%;
+    padding: 1.5% 3.5%;
+    font-family: $secondary-font;
+    font-size: 2.5vw;
+    background: url(../images/map.svg);
+    background-size: auto 80%;
+    background-position: 98% center;
+    background-repeat: no-repeat;
+
+    a {
+      font-family: $special-font;
+      vertical-align: middle;
+
+      &::after {
+        content: '';
+        display: inline-block;
+        vertical-align: middle;
+        height: 1.5em;
+        width: 3em;
+        margin-left: .5%;
+        background: url(../images/eyes.svg);
+        background-size: auto 100%;
+        background-position: center center;
+        background-repeat: no-repeat;
+      }
+    }
+
+    &-byline {
+      font-size: 1.6vw;
+      display: inline-block;
+      vertical-align: middle;
+      margin-left: .5%;
+    }
+
+    &-tagline {
+      font-size: 16px;
+    }
+
+    @media (max-width: $min-content-width) {
+      font-size: 24px;
+
+      &-tagline {
+        font-size: 16px;
+      }
+    }
+  }
 }
+
