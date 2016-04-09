@@ -1,4 +1,4 @@
 <div class="hud-element">
-  <div class="hud-element-border" style="background-image: url({{border}}); z-index: {{cover ? 2 : 0}};"></div>
+  <img class="hud-element-border" ng-src="{{border}}" style="z-index: {{cover ? 2 : 0}};" loop></img>
   <div class="hud-element-directive" style="{{contentPosition}}" ng-transclude></div>
 </div>

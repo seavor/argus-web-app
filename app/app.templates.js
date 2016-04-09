@@ -6,8 +6,8 @@ angular.module('app').run(['$templateCache', function($templateCache) {
     "        width: 60%;\n" +
     "        height: 75%;\n" +
     "        top: 14%;\n" +
-    "        left: 18%;\n" +
-    "      '\"><body-suit></body-suit></hud-element><hud-animation class=body-suit-animation src=\"'images/bottom-hud.svg'\"></hud-animation></div><div class=video-feed><hud-element class=video-feed-directive border=\"'images/borders/video.svg'\" cover><video-feed></video-feed></hud-element><hud-animation class=video-feed-animation src=\"'images/right-hud.png'\"></hud-animation><hud-element class=video-feed-thumbnails border=\"'images/borders/thumbnails.svg'\" content-position=\"'\n" +
+    "        left: 17%;\n" +
+    "      '\"><body-suit></body-suit></hud-element><hud-animation class=body-suit-animation src=\"'images/bottom-hud.svg'\"></hud-animation></div><div class=video-feed><hud-element class=video-feed-directive border=\"'http://placehold.it/1600x900'\" cover></hud-element><hud-animation class=video-feed-animation src=\"'images/right-hud.png'\"></hud-animation><hud-element class=video-feed-thumbnails border=\"'images/borders/thumbnails.gif'\" content-position=\"'\n" +
     "        width: 85%;\n" +
     "        height: 50%;\n" +
     "        top: 20%;\n" +
@@ -22,7 +22,7 @@ angular.module('app').run(['$templateCache', function($templateCache) {
 
 
   $templateCache.put('app/directives/hud-element/hud-element.template.html',
-    "<div class=hud-element><div class=hud-element-border style=\"background-image: url({{border}}); z-index: {{cover ? 2 : 0}}\"></div><div class=hud-element-directive style={{contentPosition}} ng-transclude></div></div>"
+    "<div class=hud-element><img class=hud-element-border ng-src={{border}} style=\"z-index: {{cover ? 2 : 0}}\" loop><div class=hud-element-directive style={{contentPosition}} ng-transclude></div></div>"
   );
 
 
