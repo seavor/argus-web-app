@@ -3,13 +3,14 @@
   position: relative;
 
   &-header {
+    background-color: rgba(map-get($white, solid), .1);
     width: 100%;
-    padding: 1.5% 3.5%;
+    padding: $sm-spacer $lg-spacer;
     font-family: $secondary-font;
     font-size: 2.5vw;
-    background: url(../images/map.svg);
+    background-image: url(../images/map.svg);
     background-size: auto 80%;
-    background-position: 98% center;
+    background-position: calc(100% - #{$lg-spacer}) center;
     background-repeat: no-repeat;
 
     a {
@@ -23,7 +24,7 @@
         height: 1.5em;
         width: 3em;
         margin-left: .5%;
-        background: url(../images/eyes.svg);
+        background-image: url(../images/eyes.svg);
         background-size: auto 100%;
         background-position: center center;
         background-repeat: no-repeat;
@@ -38,16 +39,26 @@
     }
 
     &-tagline {
-      font-size: 16px;
+      font-size: 1vw;
     }
 
     @media (max-width: $min-content-width) {
       font-size: 24px;
 
-      &-tagline {
+      &-byline {
         font-size: 16px;
       }
+
+      &-tagline {
+        font-size: 10px;
+      }
     }
+  }
+
+  &-content {
+    background-color: rgba(map-get($white, solid), .2);
+    min-height: 500px;
+    padding: 0 $lg-spacer $md-spacer;
   }
 }
 
