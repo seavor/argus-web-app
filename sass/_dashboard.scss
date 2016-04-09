@@ -53,25 +53,25 @@
   .body-suit,
   .video-feed {
     float: left;
-
-    &-animation {
-      height: 50px;
-    }
   }
 
   .body-suit {
-    width: 30%;
+    width: 25%;
     padding-right: 2.5vw;
 
     &-directive {
       padding-bottom: 167%;
       margin-bottom: 8%;
     }
+
+    &-animation {
+      height: 60px;
+    }
   }
 
   .video-feed {
     @extend .clearfix;
-    width: 70%;
+    width: 75%;
 
     &-directive,
     &-animation {
@@ -80,13 +80,13 @@
 
     &-directive {
       width: 85%;
-      padding-bottom: 56.65%;
+      padding-bottom: 47.81%;
       margin-bottom: 3%;
     }
 
     &-animation {
       width: 15%;
-      height: 100%;
+      height: 31.15vw;
       padding-left: 2.5vw;
     }
 
@@ -113,8 +113,9 @@
       padding-right: 25px;
     }
 
-    .video-feed-animatio {
+    .video-feed-animation {
       padding-left: 25px;
+      height: 305px;
     }
   }
 }
