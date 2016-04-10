@@ -10,8 +10,6 @@
             }
         };
         return directive;
-        function linker(scope, elem, attrs) {
-            console.info("Initializing Hud Animation: ", scope);
-        }
+        function linker(scope, elem, attrs) {}
     } ]);
 })();

@@ -42,7 +42,6 @@
                 renderer.setSize(CANVAS_WIDTH, CANVAS_HEIGHT);
                 renderer.setPixelRatio(window.devicePixelRatio);
                 renderer.sortObjects = false;
-                renderer.setClearColor(16777215, 0);
                 container.appendChild(renderer.domElement);
                 loadData(group, scene);
                 animate();
@@ -72,17 +71,17 @@
                 }
             }
             function videoPlay() {
+                console.log("Clicked");
                 if (!selectedEye) {
                     INTERSECTED.material.color.setHex(16711680);
                     selectedEye = INTERSECTED;
-                    console.log("initial playing", selectedEye.bodyposition);
                 }
                 if (selectedEye && INTERSECTED != selectedEye) {
                     selectedEye.material.color.setHex(65280);
                     INTERSECTED.material.color.setHex(16711680);
                     selectedEye = INTERSECTED;
-                    console.log("playing", selectedEye.bodyposition);
                 }
+                console.log("initial playing", selectedEye);
             }
             function loadData(group, scene) {
                 var manager = new THREE.LoadingManager(), loader = new THREE.OBJLoader(manager), eyes = suitSrvc.getEyes(), length = eyes.length, i, currentEye, eyeLoader;
@@ -123,14 +122,13 @@
                                 });
                                 child.bodyposition = this.bodyposition;
                             }
-                        });
+                        }.bind(currentEye));
                         group.add(object);
                         scene.add(group);
                     }.bind(currentEye), onProgress, onError);
                 }
             }
             function render() {
-                console.info("Render..");
                 var intersects, idleTime = Date.now() - idleSince;
                 if (idleTime > IDLE_AFTER_MS) {
                     idling = true;
@@ -141,23 +139,22 @@
                     idling = false;
                     group.rotation.y += (targetRotationX - group.rotation.y) * .1;
                 }
-                group.rotation.y += (targetRotationX - group.rotation.y) * .1;
                 raycaster.setFromCamera(mouse, camera);
                 intersects = raycaster.intersectObjects(scene.children, true);
                 if (intersects.length > 0) {
+                    resetIntersected();
                     if (INTERSECTED != intersects[0].object) {
-                        resetIntersected();
                         if (intersects[0].object.name.indexOf("eye") > -1) {
                             INTERSECTED = intersects[0].object;
                             if (touchIsDown) {
+                                console.log("Play it");
                                 videoPlay();
                             } else {
                                 INTERSECTED.material.color.setHex(28351);
+                                console.log("Hover it");
                             }
                         }
                     }
-                } else {
-                    resetIntersected();
                 }
                 renderer.render(scene, camera);
             }

@@ -19,7 +19,7 @@
             /*************************************************/
 
             function linker(scope, elem, attrs) {
-                console.info('Initializing Hud Element: ', scope);
+                // console.info('Initializing Hud Element: ', scope);
             }
         }
     ]);

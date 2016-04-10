@@ -61,7 +61,7 @@
                 document.addEventListener('mousedown', onDocumentMouseDown, false);
                 document.addEventListener('touchstart', onDocumentTouchStart, false);
                 document.addEventListener('touchmove', onDocumentTouchMove, false);
-                document.addEventListener( 'touchend', onDocumentTouchEnd, false );
+                document.addEventListener('touchend', onDocumentTouchEnd, false );
 
                 // window resize listener
                 window.addEventListener('resize', onWindowResize, false);
@@ -72,7 +72,7 @@
                     document.removeEventListener('mousedown', onDocumentMouseDown, false);
                     document.removeEventListener('touchstart', onDocumentTouchStart, false);
                     document.removeEventListener('touchmove', onDocumentTouchMove, false);
-                    document.removeEventListener( 'touchend', onDocumentTouchEnd, false );
+                    document.removeEventListener('touchend', onDocumentTouchEnd, false );
 
                     window.removeEventListener('resize', onWindowResize, false);
 
@@ -110,7 +110,6 @@
                     renderer.setSize(CANVAS_WIDTH, CANVAS_HEIGHT);
                     renderer.setPixelRatio(window.devicePixelRatio);
                     renderer.sortObjects = false;
-                    renderer.setClearColor(0xffffff, 0);
 
                     container.appendChild(renderer.domElement);
 
@@ -152,19 +151,20 @@
                 }
 
                 function videoPlay() {
+                    console.log('Clicked');
                     if (!selectedEye) {
                         INTERSECTED.material.color.setHex(0xff0000);
                         selectedEye = INTERSECTED;
-                        console.log('initial playing', selectedEye.bodyposition);
                     }
 
                     if (( selectedEye ) && (INTERSECTED != selectedEye)) {
                         selectedEye.material.color.setHex(0x00ff00);
                         INTERSECTED.material.color.setHex(0xff0000);
-                        // togglePlayStatus(selectedEye, INTERSECTED);
                         selectedEye = INTERSECTED;
-                        console.log('playing', selectedEye.bodyposition);
+                        // togglePlayStatus(selectedEye, INTERSECTED);
                     }
+
+                    console.log('initial playing', selectedEye);
                 }
 
                 function loadData(group, scene) {
@@ -217,7 +217,7 @@
                                     child.material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
                                     child.bodyposition = this.bodyposition;
                                 }
-                            });
+                            }.bind(currentEye));
 
                             group.add(object);
                             scene.add(group);
@@ -227,8 +227,6 @@
 
                 // render scene
                 function render() {
-                    console.info('Render..');
-
                     var intersects,
                         idleTime = Date.now() - idleSince;
 
@@ -243,9 +241,6 @@
                         group.rotation.y += ( targetRotationX - group.rotation.y ) * 0.1;
                     }
 
-                    //horizontal rotation
-                    group.rotation.y += (targetRotationX - group.rotation.y) * 0.1;
-
                     // find intersections
                     raycaster.setFromCamera(mouse, camera);
 
@@ -253,27 +248,25 @@
                     intersects = raycaster.intersectObjects(scene.children, true);
 
                     if (intersects.length > 0) {
+                        resetIntersected();
 
                         if (INTERSECTED != intersects[0].object) {
-                            resetIntersected();
-
                             // find eyes
                             if (intersects[ 0 ].object.name.indexOf('eye') > -1 ) {
-
                                 //change color
                                 INTERSECTED = intersects[ 0 ].object;
 
                                 if (touchIsDown) {
+                                    console.log('Play it');
                                     videoPlay();
                                 } else {
                                     INTERSECTED.material.color.setHex( 0x006ebf );
+                                    console.log('Hover it');
                                 }
 
                             }
                         }
 
-                    } else {
-                        resetIntersected();
                     }
 
                     renderer.render(scene, camera);

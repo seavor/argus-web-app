@@ -13,8 +13,6 @@
             }
         };
         return directive;
-        function linker(scope, elem, attrs) {
-            console.info("Initializing Hud Element: ", scope);
-        }
+        function linker(scope, elem, attrs) {}
     } ]);
 })();
