@@ -24,6 +24,7 @@
     <div class="video-feed">
       <hud-element class="video-feed-directive" border="'http://placehold.it/1600x900'" cover>
         <!-- <video-feed></video-feed> -->
+        {{selectedFeed.label}}
       </hud-element>
       <hud-animation class="video-feed-animation" src="'images/right-hud.png'"></hud-animation>
       <hud-element class="video-feed-thumbnails" border="'images/borders/thumbnails.png'" content-position="'
@@ -35,9 +36,18 @@
         <div class="thumbnails">
           <div class="thumbnails-track">
             <hud-element
+              cover="true"
               class="thumbnails-item"
               border="'images/borders/thumbnail.png'"
-              ng-repeat="thumbnail in thumbnails">
+              ng-repeat="thumbnail in thumbnails"
+              ng-click="viewFeed($index)"
+              content-position="'
+                width: 94%;
+                height: 86%;
+                top: 5%;
+                left: 2%;
+              '">
+              <div class="thumbnails-item-image" style="background-image: url(images/thumbnail.png);"></button>
             </hud-element>
           </div>
         </div>

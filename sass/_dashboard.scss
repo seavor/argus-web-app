@@ -130,16 +130,24 @@
     width: 100%;
     overflow: auto;
     background-color: black;
-    border: 1px solid white;
 
     &-track {
       height: 100%;
       min-width: 100%;
+      white-space: nowrap;
     }
 
     &-item {
-      border: 1px solid red;
+      display: inline-block;
+      margin-right: 5%;
+      width: 25%;
       height: 100%;
+
+      &-image {
+        background-size: cover;
+        height: 100%;
+        background-size: cover;
+      }
     }
   }
 
