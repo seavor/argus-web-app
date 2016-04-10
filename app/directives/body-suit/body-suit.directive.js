@@ -162,6 +162,12 @@
                         selectedEye = INTERSECTED;
                         // togglePlayStatus(selectedEye, INTERSECTED);
                     }
+                    viewFeed(selectedEye);
+                }
+                
+                function viewFeed(selected) {
+                    console.log(selected.bodyposition);
+
                 }
 
                 function loadData(group, scene) {
