@@ -1,15 +1,16 @@
 (function() {
-    angular.module("app").directive("bodySuit", [ "$document", "$window", "$state", "$timeout", "localStorageService", function($document, $window, $state, $timeout, localStorageService) {
+    angular.module("app").directive("bodySuit", [ "$q", "$document", "$window", "$state", "$timeout", "localStorageService", function($q, $document, $window, $state, $timeout, localStorageService) {
         var directive = {
             restrict: "E",
             replace: true,
-            template: "<canvas />",
+            template: "<div />",
             link: linker
         };
         return directive;
         function linker(scope, elem, attrs) {
             console.info("Initializing Body Suit: ", scope);
-            var scene = new THREE.Scene(), group = new THREE.Object3D(), mouse = new THREE.Vector2(), renderer = new THREE.WebGLRenderer(), raycaster = new THREE.Raycaster(), camera, mesh, container, INTERSECTED, CANVAS_WIDTH, CANVAS_HEIGHT, CANVAS_OFFSETX, CANVAS_OFFSETY, targetRotationX = 0, targetRotationOnMouseDownX = 0, mouseX = 0, mouseXOnMouseDown = 0, mouseIsDown = false, windowHalfX;
+            var scene = new THREE.Scene(), group = new THREE.Object3D(), mouse = new THREE.Vector2(), renderer = new THREE.WebGLRenderer(), raycaster = new THREE.Raycaster(), camera, mesh, INTERSECTED, CANVAS_WIDTH, CANVAS_HEIGHT, CANVAS_OFFSETX, CANVAS_OFFSETY, targetRotationX = 0, targetRotationOnMouseDownX = 0, mouseX = 0, mouseXOnMouseDown = 0, mouseIsDown = false, windowHalfX, container;
+            init();
             document.addEventListener("mousemove", onDocumentMouseMove, false);
             document.addEventListener("mousedown", onDocumentMouseDown, false);
             document.addEventListener("touchstart", onDocumentTouchStart, false);
@@ -27,9 +28,9 @@
                 container = elem[0];
                 CANVAS_WIDTH = container.offsetWidth;
                 CANVAS_HEIGHT = container.offsetHeight;
-                windowHalfX = CANVAS_WIDTH / 2;
                 CANVAS_OFFSETX = container.offsetLeft;
                 CANVAS_OFFSETY = container.offsetTop;
+                windowHalfX = CANVAS_WIDTH / 2;
                 camera = new THREE.PerspectiveCamera(75, CANVAS_WIDTH / CANVAS_HEIGHT, 1, 1e3);
                 camera.position.y = 0;
                 camera.position.z = 35;
@@ -114,13 +115,11 @@
                         if (intersects[0].object.name == "eyes") {
                             INTERSECTED = intersects[0].object;
                             INTERSECTED.material.color.setHex(28351);
-                            container.innerHTML = "contact";
                         }
                     }
                 } else {
                     if (INTERSECTED) INTERSECTED.material.color.setHex(16777215);
                     INTERSECTED = null;
-                    container.innerHTML = "";
                 }
                 renderer.render(scene, camera);
             }

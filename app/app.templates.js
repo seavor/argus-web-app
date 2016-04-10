@@ -7,7 +7,7 @@ angular.module('app').run(['$templateCache', function($templateCache) {
     "        height: 75%;\n" +
     "        top: 14%;\n" +
     "        left: 17%;\n" +
-    "      '\"><body-suit></body-suit></hud-element><hud-animation class=body-suit-animation src=\"'images/bottom-hud.svg'\"></hud-animation></div><div class=video-feed><hud-element class=video-feed-directive border=\"'http://placehold.it/1600x900'\" cover>{{selectedFeed.label}}</hud-element><hud-animation class=video-feed-animation src=\"'images/right-hud.png'\"></hud-animation><hud-element class=video-feed-thumbnails border=\"'images/borders/thumbnails.png'\" content-position=\"'\n" +
+    "      '\"><body-suit class=body-suit-directive-object></body-suit></hud-element><hud-animation class=body-suit-animation src=\"'images/bottom-hud.svg'\"></hud-animation></div><div class=video-feed><hud-element class=video-feed-directive border=\"'http://placehold.it/1600x900'\" cover>{{selectedFeed.label}}</hud-element><hud-animation class=video-feed-animation src=\"'images/right-hud.png'\"></hud-animation><hud-element class=video-feed-thumbnails border=\"'images/borders/thumbnails.png'\" content-position=\"'\n" +
     "        width: 85%;\n" +
     "        height: 50%;\n" +
     "        top: 20%;\n" +

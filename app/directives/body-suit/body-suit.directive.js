@@ -1,10 +1,10 @@
 (function() {
-    angular.module('app').directive('bodySuit', ['$document', '$window', '$state', '$timeout', 'localStorageService',
-        function($document, $window, $state, $timeout, localStorageService) {
+    angular.module('app').directive('bodySuit', ['$q', '$document', '$window', '$state', '$timeout', 'localStorageService',
+        function($q, $document, $window, $state, $timeout, localStorageService) {
             var directive = {
                 restrict: 'E',
                 replace: true,
-                template: '<canvas />',
+                template: '<div />',
                 link: linker
             };
 
@@ -24,8 +24,6 @@
                     camera,
                     mesh,
 
-                    container,
-
                     INTERSECTED,
 
                     CANVAS_WIDTH,
@@ -42,9 +40,11 @@
 
                     mouseIsDown = false,
 
-                    windowHalfX;
+                    windowHalfX,
 
-                // $timeout(init);
+                    container;
+
+                init();
 
                 /*************************************************/
                 /* Scope Event Listeners
@@ -82,11 +82,11 @@
                     CANVAS_WIDTH = container.offsetWidth;
                     CANVAS_HEIGHT = container.offsetHeight;
 
-                    windowHalfX = CANVAS_WIDTH / 2;
-
                     // normalize mouse
                     CANVAS_OFFSETX = container.offsetLeft;
                     CANVAS_OFFSETY = container.offsetTop;
+
+                    windowHalfX = CANVAS_WIDTH / 2;
 
                     // scene, raycaster, camera, renderer
                     camera = new THREE.PerspectiveCamera(75, CANVAS_WIDTH / CANVAS_HEIGHT, 1, 1000);
@@ -186,6 +186,7 @@
                 // render scene
                 function render() {
                     console.info('Render..');
+
                     var intersects;
 
                     //horizontal rotation
@@ -207,9 +208,6 @@
                                 //change color
                                 INTERSECTED = intersects[0].object;
                                 INTERSECTED.material.color.setHex(0x006ebf);
-
-                                // log contact
-                                container.innerHTML = 'contact';
                             }
                         }
 
@@ -220,8 +218,6 @@
 
                         // reset intersected
                         INTERSECTED = null;
-                        container.innerHTML = '';
-
                     }
 
                     renderer.render(scene, camera);

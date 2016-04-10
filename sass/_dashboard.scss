@@ -86,10 +86,18 @@
       font-size: 20px;
       user-select: none;
 
-      canvas {
+      &-object {
         height: 100%;
         width: 100%;
-        border: 1px solid;
+
+        canvas {
+          background: transparent;
+          position: absolute;
+          width: 100% !important;
+          height: 100% !important;
+          top: 0;
+          left: 0;
+        }
       }
     }
 
