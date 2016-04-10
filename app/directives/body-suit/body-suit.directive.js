@@ -89,12 +89,12 @@
 
                     console.dir(container);
 
-                    CANVAS_WIDTH = container.offsetWidth;
-                    CANVAS_HEIGHT = container.offsetHeight;
+                    CANVAS_WIDTH = container.offsetParent.offsetWidth;
+                    CANVAS_HEIGHT = container.offsetParent.offsetHeight;
 
                     // normalize mouse
-                    CANVAS_OFFSETX = container.offsetParent.offsetLeft;
-                    CANVAS_OFFSETY = container.offsetParent.offsetTop;
+                    CANVAS_OFFSETX = container.offsetParent.offsetLeft * 2;
+                    CANVAS_OFFSETY = container.offsetParent.offsetTop * 2;
 
                     windowHalfX = CANVAS_WIDTH / 2;
 

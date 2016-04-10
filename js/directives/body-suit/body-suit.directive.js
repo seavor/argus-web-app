@@ -29,10 +29,10 @@
             function init() {
                 container = elem[0];
                 console.dir(container);
-                CANVAS_WIDTH = container.offsetWidth;
-                CANVAS_HEIGHT = container.offsetHeight;
-                CANVAS_OFFSETX = container.offsetParent.offsetLeft;
-                CANVAS_OFFSETY = container.offsetParent.offsetTop;
+                CANVAS_WIDTH = container.offsetParent.offsetWidth;
+                CANVAS_HEIGHT = container.offsetParent.offsetHeight;
+                CANVAS_OFFSETX = container.offsetParent.offsetLeft * 2;
+                CANVAS_OFFSETY = container.offsetParent.offsetTop * 2;
                 windowHalfX = CANVAS_WIDTH / 2;
                 camera = new THREE.PerspectiveCamera(50, CANVAS_WIDTH / CANVAS_HEIGHT, 1, 1e3);
                 camera.position.y = 0;
