@@ -22,7 +22,7 @@ angular.module('app').run(['$templateCache', function($templateCache) {
 
 
   $templateCache.put('app/directives/hud-animation/hud-animation.template.html',
-    "<div class=hud-animation><img src={{src}} apng></div>"
+    "<div class=hud-animation><img ng-src={{src}} apng></div>"
   );
 
 

@@ -46,7 +46,7 @@
                     selectedEye,
                     idleSince = Date.now(),
                     idling = false,
-                    IDLE_AFTER_MS = 1000 * 10,
+                    IDLE_AFTER_MS = 1000 * 5,
 
                     container;
 
@@ -87,14 +87,12 @@
                 function init() {
                     container = elem[0];
 
-                    console.dir(container);
-
                     CANVAS_WIDTH = container.offsetParent.offsetWidth;
                     CANVAS_HEIGHT = container.offsetParent.offsetHeight;
 
                     // normalize mouse
-                    CANVAS_OFFSETX = container.offsetParent.offsetLeft * 2;
-                    CANVAS_OFFSETY = container.offsetParent.offsetTop * 2;
+                    CANVAS_OFFSETX = container.offsetParent.offsetLeft + container.offsetParent.offsetParent.offsetLeft;
+                    CANVAS_OFFSETY = container.offsetParent.offsetTop + container.offsetParent.offsetParent.offsetTop;
 
                     windowHalfX = CANVAS_WIDTH / 2;
 
@@ -131,11 +129,6 @@
                         mouse.x = (normalizedX / CANVAS_WIDTH) * 2 - 1;
                         mouse.y = -(normalizedY / CANVAS_HEIGHT) * 2 + 1;
                     }
-
-                    console.log('Client: ', clientX, clientY);
-                    console.log('Mouse: ', mouse.x, mouse.y);
-                    console.log('Normalized: ', normalizedX, normalizedY);
-
                 }
 
                 // detect if on canvas
@@ -158,7 +151,6 @@
                 }
 
                 function videoPlay() {
-                    console.log('Clicked');
                     if (!selectedEye) {
                         INTERSECTED.material.color.setHex(0xff0000);
                         selectedEye = INTERSECTED;
@@ -170,8 +162,6 @@
                         selectedEye = INTERSECTED;
                         // togglePlayStatus(selectedEye, INTERSECTED);
                     }
-
-                    console.log('initial playing', selectedEye);
                 }
 
                 function loadData(group, scene) {
@@ -217,14 +207,12 @@
 
                         eyeLoader.load( 'obj/eyes/' + eyes[i].filename, function ( object ) {
 
-                            console.log('Current Eye: ', this);
-
                             object.traverse( function ( child ) {
                                 if ( child instanceof THREE.Mesh ) {
                                     child.material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
                                     child.bodyposition = this.bodyposition;
                                 }
-                            }.bind(currentEye));
+                            }.bind(this));
 
                             group.add(object);
                             scene.add(group);
@@ -253,27 +241,31 @@
 
                     // checks intersects for children of children
                     intersects = raycaster.intersectObjects(scene.children, true);
+                    
 
                     if (intersects.length > 0) {
-                        resetIntersected();
+    
+
 
                         if (INTERSECTED != intersects[0].object) {
+                            resetIntersected();
                             // find eyes
                             if (intersects[ 0 ].object.name.indexOf('eye') > -1 ) {
                                 //change color
                                 INTERSECTED = intersects[ 0 ].object;
 
                                 if (touchIsDown) {
-                                    console.log('Play it');
                                     videoPlay();
                                 } else {
                                     INTERSECTED.material.color.setHex( 0x006ebf );
-                                    console.log('Hover it');
                                 }
 
                             }
                         }
 
+                    } else {
+                        
+                         resetIntersected();
                     }
 
                     renderer.render(scene, camera);
@@ -331,7 +323,6 @@
                     if (mouseIsDown === true) {
                         mouseX = event.clientX - windowHalfX;
                         targetRotationX = targetRotationOnMouseDownX + (mouseX - mouseXOnMouseDown) * 0.02;
-                        console.log(targetRotationX);
                     }
 
                 }
@@ -360,7 +351,6 @@
                     var touch;
 
                     touchIsDown = true;
-                    console.log('touch', touchIsDown);
 
                     idleSince = Date.now();
 
@@ -403,7 +393,6 @@
 
                     if (xhr.lengthComputable) {
                         percentComplete = xhr.loaded / xhr.total * 100;
-                        //console.log( Math.round(percentComplete, 2) + '% downloaded' );
                     }
                 }
 
