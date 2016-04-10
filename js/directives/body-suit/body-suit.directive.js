@@ -1,5 +1,5 @@
 (function() {
-    angular.module("app").directive("bodySuit", [ "$q", "$document", "$window", "$state", "$timeout", "localStorageService", function($q, $document, $window, $state, $timeout, localStorageService) {
+    angular.module("app").directive("bodySuit", [ "$q", "$document", "$window", "$state", "$timeout", "suitSrvc", "localStorageService", function($q, $document, $window, $state, $timeout, suitSrvc, localStorageService) {
         var directive = {
             restrict: "E",
             replace: true,
@@ -9,18 +9,20 @@
         return directive;
         function linker(scope, elem, attrs) {
             console.info("Initializing Body Suit: ", scope);
-            var scene = new THREE.Scene(), group = new THREE.Object3D(), mouse = new THREE.Vector2(), renderer = new THREE.WebGLRenderer(), raycaster = new THREE.Raycaster(), camera, mesh, INTERSECTED, CANVAS_WIDTH, CANVAS_HEIGHT, CANVAS_OFFSETX, CANVAS_OFFSETY, targetRotationX = 0, targetRotationOnMouseDownX = 0, mouseX = 0, mouseXOnMouseDown = 0, mouseIsDown = false, windowHalfX, container;
+            var scene = new THREE.Scene(), group = new THREE.Object3D(), mouse = new THREE.Vector2(), renderer = new THREE.WebGLRenderer(), raycaster = new THREE.Raycaster(), camera, INTERSECTED, CANVAS_WIDTH, CANVAS_HEIGHT, CANVAS_OFFSETX, CANVAS_OFFSETY, targetRotationX = 0, targetRotationOnMouseDownX = 0, mouseX = 0, mouseXOnMouseDown = 0, mouseIsDown = false, touchIsDown = false, windowHalfX, selectedEye, idleSince = Date.now(), idling = false, IDLE_AFTER_MS = 5e3, container;
             init();
             document.addEventListener("mousemove", onDocumentMouseMove, false);
             document.addEventListener("mousedown", onDocumentMouseDown, false);
             document.addEventListener("touchstart", onDocumentTouchStart, false);
             document.addEventListener("touchmove", onDocumentTouchMove, false);
+            document.addEventListener("touchend", onDocumentTouchEnd, false);
             window.addEventListener("resize", onWindowResize, false);
             scope.$on("$destroy", function() {
                 document.removeEventListener("mousemove", onDocumentMouseMove, false);
                 document.removeEventListener("mousedown", onDocumentMouseDown, false);
                 document.removeEventListener("touchstart", onDocumentTouchStart, false);
                 document.removeEventListener("touchmove", onDocumentTouchMove, false);
+                document.removeEventListener("touchend", onDocumentTouchEnd, false);
                 window.removeEventListener("resize", onWindowResize, false);
                 animate = noop;
             });
@@ -58,8 +60,31 @@
                     return true;
                 }
             }
+            function resetIntersected() {
+                if (selectedEye && INTERSECTED == selectedEye) {
+                    INTERSECTED = null;
+                } else {
+                    if (INTERSECTED) {
+                        INTERSECTED.material.color.setHex(65280);
+                    }
+                    INTERSECTED = null;
+                }
+            }
+            function videoPlay() {
+                if (!selectedEye) {
+                    INTERSECTED.material.color.setHex(16711680);
+                    selectedEye = INTERSECTED;
+                    console.log("initial playing", selectedEye.bodyposition);
+                }
+                if (selectedEye && INTERSECTED != selectedEye) {
+                    selectedEye.material.color.setHex(65280);
+                    INTERSECTED.material.color.setHex(16711680);
+                    selectedEye = INTERSECTED;
+                    console.log("playing", selectedEye.bodyposition);
+                }
+            }
             function loadData(group, scene) {
-                var manager = new THREE.LoadingManager(), loader = new THREE.OBJLoader(manager);
+                var manager = new THREE.LoadingManager(), loader = new THREE.OBJLoader(manager), eyes = suitSrvc.getEyes(), length = eyes.length, i, currentEye, eyeLoader;
                 loader.load("obj/argus.obj", function(object) {
                     object.traverse(function(child) {
                         if (child instanceof THREE.Mesh) {
@@ -70,7 +95,6 @@
                             });
                         }
                     });
-                    object.position.y = 8;
                     group.add(object);
                 }, onProgress, onError);
                 loader.load("obj/argus2.obj", function(object) {
@@ -84,42 +108,55 @@
                             child.scale.z = .99;
                         }
                     });
-                    object.position.y = 8;
                     group.add(object);
                 }, onProgress, onError);
-                loader.load("obj/eyes.obj", function(object) {
-                    object.traverse(function(child) {
-                        if (child instanceof THREE.Mesh) {
-                            child.material = new THREE.MeshBasicMaterial({
-                                color: 16777215
-                            });
-                            child.scale.x = 1.1;
-                            child.scale.y = 1.1;
-                            child.scale.z = 1.1;
-                        }
-                    });
-                    object.position.y = 3;
-                    object.position.z = .5;
-                    group.add(object);
-                    scene.add(group);
-                }, onProgress, onError);
+                for (i = 0; length > i; i++) {
+                    eyeLoader = new THREE.OBJLoader(manager);
+                    currentEye = eyes[i];
+                    eyeLoader.load("obj/eyes/" + eyes[i].filename, function(object) {
+                        console.log("Current Eye: ", this);
+                        object.traverse(function(child) {
+                            if (child instanceof THREE.Mesh) {
+                                child.material = new THREE.MeshBasicMaterial({
+                                    color: 65280
+                                });
+                                child.bodyposition = this.bodyposition;
+                            }
+                        });
+                        group.add(object);
+                        scene.add(group);
+                    }.bind(currentEye), onProgress, onError);
+                }
             }
             function render() {
                 console.info("Render..");
-                var intersects;
+                var intersects, idleTime = Date.now() - idleSince;
+                if (idleTime > IDLE_AFTER_MS) {
+                    idling = true;
+                    group.rotation.y += .01;
+                    mouse.x = 1;
+                    mouse.y = 1;
+                } else {
+                    idling = false;
+                    group.rotation.y += (targetRotationX - group.rotation.y) * .1;
+                }
                 group.rotation.y += (targetRotationX - group.rotation.y) * .1;
                 raycaster.setFromCamera(mouse, camera);
                 intersects = raycaster.intersectObjects(scene.children, true);
                 if (intersects.length > 0) {
                     if (INTERSECTED != intersects[0].object) {
-                        if (intersects[0].object.name == "eyes") {
+                        resetIntersected();
+                        if (intersects[0].object.name.indexOf("eye") > -1) {
                             INTERSECTED = intersects[0].object;
-                            INTERSECTED.material.color.setHex(28351);
+                            if (touchIsDown) {
+                                videoPlay();
+                            } else {
+                                INTERSECTED.material.color.setHex(28351);
+                            }
                         }
                     }
                 } else {
-                    if (INTERSECTED) INTERSECTED.material.color.setHex(16777215);
-                    INTERSECTED = null;
+                    resetIntersected();
                 }
                 renderer.render(scene, camera);
             }
@@ -143,6 +180,13 @@
                 mouseIsDown = true;
                 mouseXOnMouseDown = event.clientX - windowHalfX;
                 targetRotationOnMouseDownX = targetRotationX;
+                if (INTERSECTED) {
+                    videoPlay();
+                }
+                idleSince = Date.now();
+                if (idling) {
+                    group.rotation.y = 0;
+                }
             }
             function onDocumentMouseMove(event) {
                 setMousePosition(event.clientX, event.clientY);
@@ -164,9 +208,18 @@
             }
             function onDocumentTouchStart(event) {
                 var touch;
+                touchIsDown = true;
+                console.log("touch", touchIsDown);
+                idleSince = Date.now();
+                if (idling) {
+                    group.rotation.y = 0;
+                }
                 if (event.touches.length == 1) {
                     touch = event.touches[0];
                     setMousePosition(touch.clientX, touch.clientY);
+                }
+                if (INTERSECTED) {
+                    videoPlay();
                 }
                 if (event.touches.length == 1) {
                     event.preventDefault();
@@ -180,6 +233,9 @@
                     mouseX = event.touches[0].pageX - windowHalfX;
                     targetRotationX = targetRotationOnMouseDownX + (mouseX - mouseXOnMouseDown) * .05;
                 }
+            }
+            function onDocumentTouchEnd(event) {
+                touchIsDown = false;
             }
             function onProgress(xhr) {
                 var percentComplete;
