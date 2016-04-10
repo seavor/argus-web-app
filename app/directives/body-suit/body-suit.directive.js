@@ -46,11 +46,11 @@
                     selectedEye,
                     idleSince = Date.now(),
                     idling = false,
-                    IDLE_AFTER_MS = 5000,
+                    IDLE_AFTER_MS = 1000 * 10,
 
                     container;
 
-                init();
+                $timeout(init);
 
                 /*************************************************/
                 /* Scope Event Listeners
@@ -87,12 +87,14 @@
                 function init() {
                     container = elem[0];
 
+                    console.dir(container);
+
                     CANVAS_WIDTH = container.offsetWidth;
                     CANVAS_HEIGHT = container.offsetHeight;
 
                     // normalize mouse
-                    CANVAS_OFFSETX = container.offsetLeft;
-                    CANVAS_OFFSETY = container.offsetTop;
+                    CANVAS_OFFSETX = container.offsetParent.offsetLeft;
+                    CANVAS_OFFSETY = container.offsetParent.offsetTop;
 
                     windowHalfX = CANVAS_WIDTH / 2;
 
@@ -129,6 +131,11 @@
                         mouse.x = (normalizedX / CANVAS_WIDTH) * 2 - 1;
                         mouse.y = -(normalizedY / CANVAS_HEIGHT) * 2 + 1;
                     }
+
+                    console.log('Client: ', clientX, clientY);
+                    console.log('Mouse: ', mouse.x, mouse.y);
+                    console.log('Normalized: ', normalizedX, normalizedY);
+
                 }
 
                 // detect if on canvas

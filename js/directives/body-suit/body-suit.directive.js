@@ -9,8 +9,8 @@
         return directive;
         function linker(scope, elem, attrs) {
             console.info("Initializing Body Suit: ", scope);
-            var scene = new THREE.Scene(), group = new THREE.Object3D(), mouse = new THREE.Vector2(), renderer = new THREE.WebGLRenderer(), raycaster = new THREE.Raycaster(), camera, INTERSECTED, CANVAS_WIDTH, CANVAS_HEIGHT, CANVAS_OFFSETX, CANVAS_OFFSETY, targetRotationX = 0, targetRotationOnMouseDownX = 0, mouseX = 0, mouseXOnMouseDown = 0, mouseIsDown = false, touchIsDown = false, windowHalfX, selectedEye, idleSince = Date.now(), idling = false, IDLE_AFTER_MS = 5e3, container;
-            init();
+            var scene = new THREE.Scene(), group = new THREE.Object3D(), mouse = new THREE.Vector2(), renderer = new THREE.WebGLRenderer(), raycaster = new THREE.Raycaster(), camera, INTERSECTED, CANVAS_WIDTH, CANVAS_HEIGHT, CANVAS_OFFSETX, CANVAS_OFFSETY, targetRotationX = 0, targetRotationOnMouseDownX = 0, mouseX = 0, mouseXOnMouseDown = 0, mouseIsDown = false, touchIsDown = false, windowHalfX, selectedEye, idleSince = Date.now(), idling = false, IDLE_AFTER_MS = 1e3 * 10, container;
+            $timeout(init);
             document.addEventListener("mousemove", onDocumentMouseMove, false);
             document.addEventListener("mousedown", onDocumentMouseDown, false);
             document.addEventListener("touchstart", onDocumentTouchStart, false);
@@ -28,10 +28,11 @@
             });
             function init() {
                 container = elem[0];
+                console.dir(container);
                 CANVAS_WIDTH = container.offsetWidth;
                 CANVAS_HEIGHT = container.offsetHeight;
-                CANVAS_OFFSETX = container.offsetLeft;
-                CANVAS_OFFSETY = container.offsetTop;
+                CANVAS_OFFSETX = container.offsetParent.offsetLeft;
+                CANVAS_OFFSETY = container.offsetParent.offsetTop;
                 windowHalfX = CANVAS_WIDTH / 2;
                 camera = new THREE.PerspectiveCamera(50, CANVAS_WIDTH / CANVAS_HEIGHT, 1, 1e3);
                 camera.position.y = 0;
@@ -54,6 +55,9 @@
                     mouse.x = normalizedX / CANVAS_WIDTH * 2 - 1;
                     mouse.y = -(normalizedY / CANVAS_HEIGHT) * 2 + 1;
                 }
+                console.log("Client: ", clientX, clientY);
+                console.log("Mouse: ", mouse.x, mouse.y);
+                console.log("Normalized: ", normalizedX, normalizedY);
             }
             function isOnCanvas(clientX, clientY) {
                 if (clientX > CANVAS_OFFSETX && clientX < CANVAS_OFFSETX + CANVAS_WIDTH && (clientY > CANVAS_OFFSETY && clientY < CANVAS_OFFSETY + CANVAS_HEIGHT)) {

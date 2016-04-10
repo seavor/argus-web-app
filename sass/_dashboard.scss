@@ -89,12 +89,11 @@
       &-object {
         height: 100%;
         width: 100%;
+        position: relative;
 
         canvas {
           background: transparent;
           position: absolute;
-          width: 100% !important;
-          height: 100% !important;
           top: -7%;
           left: 0;
         }
