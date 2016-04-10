@@ -80,6 +80,10 @@
                     INTERSECTED.material.color.setHex(16711680);
                     selectedEye = INTERSECTED;
                 }
+                viewFeed(selectedEye);
+            }
+            function viewFeed(selected) {
+                console.log(selected.bodyposition);
             }
             function loadData(group, scene) {
                 var manager = new THREE.LoadingManager(), loader = new THREE.OBJLoader(manager), eyes = suitSrvc.getEyes(), length = eyes.length, i, currentEye, eyeLoader;
