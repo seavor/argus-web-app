@@ -8,7 +8,7 @@
         };
         return directive;
         function linker(scope, elem, attrs) {
-            console.log("Initializing Video Feed: ", scope);
+            console.info("Initializing Video Feed: ", scope);
         }
     } ]);
 })();

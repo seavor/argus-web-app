@@ -13,7 +13,7 @@
             /*************************************************/
 
             function linker(scope, elem, attrs) {
-                console.log('Initializing Body Suit: ', scope);
+                console.info('Initializing Body Suit: ', scope);
 
                 var scene = new THREE.Scene(),
                     group = new THREE.Object3D(),
@@ -44,7 +44,7 @@
 
                     windowHalfX;
 
-                $timeout(init);
+                // $timeout(init);
 
                 /*************************************************/
                 /* Scope Event Listeners

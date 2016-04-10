@@ -53,6 +53,7 @@ module.exports = function(grunt) {
       // Define vendors in order of dependency
       vendors: [
         'node_modules/three/three.min.js',
+        'node_modules/jquery/dist/jquery.min.js',
         'node_modules/ajpng/build/ajpng.min.js',
         'vendors/OBJLoader.js',
         'node_modules/angular/angular.min.js',

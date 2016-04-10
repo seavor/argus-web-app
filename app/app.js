@@ -5,6 +5,7 @@
         })
         .config(['$locationProvider', '$urlRouterProvider', '$stateProvider', 'localStorageServiceProvider', 'config',
         function ApplicationConfiguration($locationProvider, $urlRouterProvider, $stateProvider, localStorageServiceProvider, config) {
+            console.info('Initializing Application');
             // Setup HTML5 mode, so that the # is not present in the URL.
             $locationProvider.html5Mode(true);
 
@@ -28,13 +29,6 @@
                 abstract: true,
                 controller: 'ApplicationCtrl',
                 template: '<ui-view />'
-            });
-
-            $stateProvider.state("initializer", {
-                parent: "init",
-                url: "/initializer",
-                controller: "InitializerCtrl",
-                templateUrl: "app/initializer/initializer.template.html"
             });
 
             $stateProvider.state("dashboard", {

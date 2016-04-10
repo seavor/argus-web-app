@@ -1,4 +1,9 @@
-<div class="home-page">
+<div class="intializer" ng-if="!assetsLoaded">
+  <h1>{{config.site}}</h1>
+  <p>Loading...</p>
+</div>
+
+<div class="home-page" ng-if="assetsLoaded">
   <div class="home-page-header">
     <a id="siteID" ui-sref="dashboard">the argus project</a>
     <span class="home-page-header-byline">THE WHOLE WORLD IS WATCHING</span>

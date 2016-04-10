@@ -1,5 +1,6 @@
 (function() {
     angular.module('app').run(['$rootScope', '$state', 'config', function($rootScope, $state, config) {
+        console.info('Running Application');
         $rootScope.app = {
             title: config.site
         };

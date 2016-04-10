@@ -8,9 +8,8 @@
         };
         return directive;
         function linker(scope, elem, attrs) {
-            console.log("Initializing Body Suit: ", scope);
+            console.info("Initializing Body Suit: ", scope);
             var scene = new THREE.Scene(), group = new THREE.Object3D(), mouse = new THREE.Vector2(), renderer = new THREE.WebGLRenderer(), raycaster = new THREE.Raycaster(), camera, mesh, container, INTERSECTED, CANVAS_WIDTH, CANVAS_HEIGHT, CANVAS_OFFSETX, CANVAS_OFFSETY, targetRotationX = 0, targetRotationOnMouseDownX = 0, mouseX = 0, mouseXOnMouseDown = 0, mouseIsDown = false, windowHalfX;
-            $timeout(init);
             document.addEventListener("mousemove", onDocumentMouseMove, false);
             document.addEventListener("mousedown", onDocumentMouseDown, false);
             document.addEventListener("touchstart", onDocumentTouchStart, false);

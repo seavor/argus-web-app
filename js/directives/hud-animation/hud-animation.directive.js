@@ -11,7 +11,7 @@
         };
         return directive;
         function linker(scope, elem, attrs) {
-            console.log("Initializing Hud Animation: ", scope);
+            console.info("Initializing Hud Animation: ", scope);
         }
     } ]);
 })();

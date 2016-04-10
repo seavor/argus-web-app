@@ -1,3 +1,23 @@
+.intializer {
+  font-family: $special-font;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-transform: lowercase;
+  text-align: center;
+
+  h1 {
+    font-size: 7vw;
+    animation: rotate-y 5s infinite linear;
+    margin: 0 0 2vw;
+  }
+
+  p {
+    font-size: 1vw;
+  }
+}
+
 .home-page {
   height: 100%;
   position: relative;
@@ -119,6 +139,7 @@
 
     &-item {
       border: 1px solid red;
+      height: 100%;
     }
   }
 
