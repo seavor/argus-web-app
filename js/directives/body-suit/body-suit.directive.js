@@ -9,7 +9,7 @@
         return directive;
         function linker(scope, elem, attrs) {
             console.info("Initializing Body Suit: ", scope);
-            var scene = new THREE.Scene(), group = new THREE.Object3D(), mouse = new THREE.Vector2(), renderer = new THREE.WebGLRenderer(), raycaster = new THREE.Raycaster(), camera, INTERSECTED, CANVAS_WIDTH, CANVAS_HEIGHT, CANVAS_OFFSETX, CANVAS_OFFSETY, targetRotationX = 0, targetRotationOnMouseDownX = 0, mouseX = 0, mouseXOnMouseDown = 0, mouseIsDown = false, touchIsDown = false, windowHalfX, selectedEye, idleSince = Date.now(), idling = false, IDLE_AFTER_MS = 1e3 * 10, container;
+            var scene = new THREE.Scene(), group = new THREE.Object3D(), mouse = new THREE.Vector2(), renderer = new THREE.WebGLRenderer(), raycaster = new THREE.Raycaster(), camera, INTERSECTED, CANVAS_WIDTH, CANVAS_HEIGHT, CANVAS_OFFSETX, CANVAS_OFFSETY, targetRotationX = 0, targetRotationOnMouseDownX = 0, mouseX = 0, mouseXOnMouseDown = 0, mouseIsDown = false, touchIsDown = false, windowHalfX, selectedEye, idleSince = Date.now(), idling = false, IDLE_AFTER_MS = 1e3 * 5, container;
             $timeout(init);
             document.addEventListener("mousemove", onDocumentMouseMove, false);
             document.addEventListener("mousedown", onDocumentMouseDown, false);
@@ -28,11 +28,10 @@
             });
             function init() {
                 container = elem[0];
-                console.dir(container);
                 CANVAS_WIDTH = container.offsetParent.offsetWidth;
                 CANVAS_HEIGHT = container.offsetParent.offsetHeight;
-                CANVAS_OFFSETX = container.offsetParent.offsetLeft * 2;
-                CANVAS_OFFSETY = container.offsetParent.offsetTop * 2;
+                CANVAS_OFFSETX = container.offsetParent.offsetLeft + container.offsetParent.offsetParent.offsetLeft;
+                CANVAS_OFFSETY = container.offsetParent.offsetTop + container.offsetParent.offsetParent.offsetTop;
                 windowHalfX = CANVAS_WIDTH / 2;
                 camera = new THREE.PerspectiveCamera(50, CANVAS_WIDTH / CANVAS_HEIGHT, 1, 1e3);
                 camera.position.y = 0;
@@ -55,9 +54,6 @@
                     mouse.x = normalizedX / CANVAS_WIDTH * 2 - 1;
                     mouse.y = -(normalizedY / CANVAS_HEIGHT) * 2 + 1;
                 }
-                console.log("Client: ", clientX, clientY);
-                console.log("Mouse: ", mouse.x, mouse.y);
-                console.log("Normalized: ", normalizedX, normalizedY);
             }
             function isOnCanvas(clientX, clientY) {
                 if (clientX > CANVAS_OFFSETX && clientX < CANVAS_OFFSETX + CANVAS_WIDTH && (clientY > CANVAS_OFFSETY && clientY < CANVAS_OFFSETY + CANVAS_HEIGHT)) {
@@ -75,7 +71,6 @@
                 }
             }
             function videoPlay() {
-                console.log("Clicked");
                 if (!selectedEye) {
                     INTERSECTED.material.color.setHex(16711680);
                     selectedEye = INTERSECTED;
@@ -85,7 +80,6 @@
                     INTERSECTED.material.color.setHex(16711680);
                     selectedEye = INTERSECTED;
                 }
-                console.log("initial playing", selectedEye);
             }
             function loadData(group, scene) {
                 var manager = new THREE.LoadingManager(), loader = new THREE.OBJLoader(manager), eyes = suitSrvc.getEyes(), length = eyes.length, i, currentEye, eyeLoader;
@@ -118,7 +112,6 @@
                     eyeLoader = new THREE.OBJLoader(manager);
                     currentEye = eyes[i];
                     eyeLoader.load("obj/eyes/" + eyes[i].filename, function(object) {
-                        console.log("Current Eye: ", this);
                         object.traverse(function(child) {
                             if (child instanceof THREE.Mesh) {
                                 child.material = new THREE.MeshBasicMaterial({
@@ -126,7 +119,7 @@
                                 });
                                 child.bodyposition = this.bodyposition;
                             }
-                        }.bind(currentEye));
+                        }.bind(this));
                         group.add(object);
                         scene.add(group);
                     }.bind(currentEye), onProgress, onError);
@@ -146,19 +139,19 @@
                 raycaster.setFromCamera(mouse, camera);
                 intersects = raycaster.intersectObjects(scene.children, true);
                 if (intersects.length > 0) {
-                    resetIntersected();
                     if (INTERSECTED != intersects[0].object) {
+                        resetIntersected();
                         if (intersects[0].object.name.indexOf("eye") > -1) {
                             INTERSECTED = intersects[0].object;
                             if (touchIsDown) {
-                                console.log("Play it");
                                 videoPlay();
                             } else {
                                 INTERSECTED.material.color.setHex(28351);
-                                console.log("Hover it");
                             }
                         }
                     }
+                } else {
+                    resetIntersected();
                 }
                 renderer.render(scene, camera);
             }
@@ -195,7 +188,6 @@
                 if (mouseIsDown === true) {
                     mouseX = event.clientX - windowHalfX;
                     targetRotationX = targetRotationOnMouseDownX + (mouseX - mouseXOnMouseDown) * .02;
-                    console.log(targetRotationX);
                 }
             }
             function onDocumentMouseUp(event) {
@@ -211,7 +203,6 @@
             function onDocumentTouchStart(event) {
                 var touch;
                 touchIsDown = true;
-                console.log("touch", touchIsDown);
                 idleSince = Date.now();
                 if (idling) {
                     group.rotation.y = 0;
