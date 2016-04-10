@@ -33,15 +33,16 @@
                 CANVAS_OFFSETX = container.offsetLeft;
                 CANVAS_OFFSETY = container.offsetTop;
                 windowHalfX = CANVAS_WIDTH / 2;
-                camera = new THREE.PerspectiveCamera(75, CANVAS_WIDTH / CANVAS_HEIGHT, 1, 1e3);
+                camera = new THREE.PerspectiveCamera(50, CANVAS_WIDTH / CANVAS_HEIGHT, 1, 1e3);
                 camera.position.y = 0;
-                camera.position.z = 35;
+                camera.position.z = 50;
                 camera.lookAt(scene.position);
                 mouse.x = 1;
                 mouse.y = 1;
                 renderer.setSize(CANVAS_WIDTH, CANVAS_HEIGHT);
                 renderer.setPixelRatio(window.devicePixelRatio);
                 renderer.sortObjects = false;
+                renderer.setClearColor(16777215, 0);
                 container.appendChild(renderer.domElement);
                 loadData(group, scene);
                 animate();

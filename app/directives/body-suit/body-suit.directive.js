@@ -97,10 +97,10 @@
                     windowHalfX = CANVAS_WIDTH / 2;
 
                     // scene, raycaster, camera, renderer
-                    camera = new THREE.PerspectiveCamera(75, CANVAS_WIDTH / CANVAS_HEIGHT, 1, 1000);
+                    camera = new THREE.PerspectiveCamera(50, CANVAS_WIDTH / CANVAS_HEIGHT, 1, 1000);
 
                     camera.position.y = 0;
-                    camera.position.z = 35;
+                    camera.position.z = 50;
                     camera.lookAt(scene.position);
 
                     // initializing mouse off center
@@ -110,6 +110,7 @@
                     renderer.setSize(CANVAS_WIDTH, CANVAS_HEIGHT);
                     renderer.setPixelRatio(window.devicePixelRatio);
                     renderer.sortObjects = false;
+                    renderer.setClearColor(0xffffff, 0);
 
                     container.appendChild(renderer.domElement);
 
