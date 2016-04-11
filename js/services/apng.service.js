@@ -25,14 +25,10 @@
         function cacheAssets() {
             var promises = [];
             angular.forEach(assets, function(url) {
-                var defer = $q.defer();
-                asset = inProgress[url] = inProgress[url] || {
-                    src: url
+                var asset = inProgress[url] = inProgress[url] || {
+                    req: $http.get(url)
                 };
-                $("<img />").attr("src", asset.src).load(function() {
-                    defer.resolve();
-                });
-                promises.push(defer.promise);
+                promises.push(asset.req);
             });
             return $q.all(promises).then(function() {
                 _assetsCached = true;
