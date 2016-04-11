@@ -7,3 +7,8 @@
     transform: rotateY(360deg);
   }
 }
+
+@keyframes blink {
+    95% { opacity: 1; }
+    100% { opacity: 0; }
+}

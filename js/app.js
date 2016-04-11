@@ -18,6 +18,12 @@
             controller: "ApplicationCtrl",
             template: "<ui-view />"
         });
+        $stateProvider.state("initializer", {
+            parent: "init",
+            url: "/initializer",
+            controller: "InitializerCtrl",
+            templateUrl: "app/initializer/initializer.template.html"
+        });
         $stateProvider.state("dashboard", {
             parent: "init",
             url: "/",

@@ -4,8 +4,9 @@
         var factory = {
             initImage: initImage,
             releaseImage: releaseImage,
-            cacheAssets: cacheAssets
-        }, inProgress = {}, animatedImages = [], assets = [ window.location.origin + "/images/borders/video-feed.png" ];
+            cacheAssets: cacheAssets,
+            assetsCached: assetsCached
+        }, inProgress = {}, animatedImages = [], _assetsCached = false, assets = [ window.location.origin + "/images/video-feed.png" ];
         return factory;
         function initImage(image) {
             if (AJPNG.ifNeeded() && assets.indexOf(image.src) !== -1) {
@@ -29,7 +30,12 @@
                 };
                 promises.push(asset.req);
             });
-            return $q.all(promises);
+            return $q.all(promises).then(function() {
+                _assetsCached = true;
+            });
+        }
+        function assetsCached() {
+            return _assetsCached;
         }
     } ]);
 })();

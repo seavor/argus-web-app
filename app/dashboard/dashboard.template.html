@@ -1,13 +1,9 @@
-<div class="intializer" ng-if="!assetsLoaded">
-  <h1>{{config.site}}</h1>
-  <p>Loading...</p>
-</div>
-
-<div class="home-page" ng-if="assetsLoaded">
+<div class="home-page">
   <div class="home-page-header">
     <a id="siteID" ui-sref="dashboard">the argus project</a>
     <span class="home-page-header-byline">THE WHOLE WORLD IS WATCHING</span>
     <p class="home-page-header-tagline">Counter-surveillance Armor for the Citizen Body</p>
+    <img class="home-page-header-map" src="images/map.png" apng></img>
   </div>
   <div class="home-page-content">
     <div class="body-suit">
@@ -22,15 +18,15 @@
       <hud-animation class="body-suit-animation" src="'images/bottom-hud.png'"></hud-animation>
     </div>
     <div class="video-feed">
-      <hud-element class="video-feed-directive" border="'images/borders/video-feed.png'" cover="true">
+      <hud-element class="video-feed-directive" border="'images/video-feed.png'" cover="true">
         <video-feed src="'images/placeholder.png'"></video-feed>
-        {{selectedFeed.label}}
+        <span class="video-feed-label">{{selectedFeed.label}}</span>
       </hud-element>
       <hud-animation class="video-feed-animation" src="'images/right-hud.png'"></hud-animation>
-      <hud-element class="video-feed-thumbnails" border="'images/borders/thumbnails.png'" content-position="'
+      <hud-element class="video-feed-thumbnails" border="'images/thumbnails.png'" content-position="'
         width: 85%;
         height: 50%;
-        top: 20%;
+        top: 25%;
         left: 1%;
       '">
         <div class="thumbnails">

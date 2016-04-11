@@ -6,18 +6,22 @@
             var factory = {
                     initImage: initImage,
                     releaseImage: releaseImage,
-                    cacheAssets: cacheAssets
+                    cacheAssets: cacheAssets,
+                    assetsCached: assetsCached
                 },
 
                 inProgress = {},
 
                 animatedImages = [],
 
+                _assetsCached = false,
+
                 assets = [
+                    // window.location.origin + '/images/map.png'
                     // window.location.origin + '/images/bottom-hud.png',
                     // window.location.origin + '/images/right-hud.png',
-                    // window.location.origin + '/images/borders/thumbnails.png',
-                    window.location.origin + '/images/borders/video-feed.png'
+                    // window.location.origin + '/images/thumbnails.png',
+                    window.location.origin + '/images/video-feed.png'
                 ];
 
             return factory;
@@ -54,7 +58,13 @@
                     promises.push(asset.req);
                 });
 
-                return $q.all(promises);
+                return $q.all(promises).then(function() {
+                    _assetsCached = true;
+                });
+            }
+
+            function assetsCached() {
+                return _assetsCached;
             }
         }
     ]);

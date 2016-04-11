@@ -3,6 +3,11 @@
         function($scope, $timeout, $state, apngSrvc, localStorageService) {
             console.info('Initializing Dashboard Controller: ', $scope);
 
+            if (!apngSrvc.assetsCached()) {
+                $state.go('initializer');
+                return;
+            }
+
             $scope.thumbnails = [
                 {
                     id: 1,
@@ -28,13 +33,7 @@
             ];
 
             $scope.selectedFeed = $scope.thumbnails[(localStorageService.get('selectedIdx') || 0)];
-
             $scope.viewFeed = viewFeed;
-
-            apngSrvc.cacheAssets().then(function() {
-                $scope.assetsLoaded = true;
-            });
-
 
             /************************************/
 
