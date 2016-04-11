@@ -3,7 +3,8 @@
 
 # Build Files
 **/node_modules
-*.map
+**/*.map
+**/*.log
 /.sass-cache
 
 # Local Files

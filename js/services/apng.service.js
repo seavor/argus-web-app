@@ -5,11 +5,11 @@
             initImage: initImage,
             releaseImage: releaseImage,
             cacheAssets: cacheAssets
-        }, inProgress = {}, assets = [ window.location.origin + "/images/borders/thumbnails.png" ];
+        }, inProgress = {}, animatedImages = [], assets = [ window.location.origin + "/images/borders/video-feed.png" ];
         return factory;
         function initImage(image) {
             if (AJPNG.ifNeeded() && assets.indexOf(image.src) !== -1) {
-                console.log("Init Image: ", image.src);
+                console.log("Init Image: ", image);
                 AJPNG.animateImage(image);
             }
             return factory;

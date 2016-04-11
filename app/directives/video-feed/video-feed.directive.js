@@ -4,8 +4,11 @@
             var directive = {
               restrict: 'E',
               replace: true,
-              template: '<div />',
-              link: linker
+              template: '<img ng-src="{{src}}">',
+              link: linker,
+              scope: {
+                src: '='
+              }
             };
 
             return directive;
