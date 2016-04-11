@@ -87,6 +87,8 @@
                 function init() {
                     container = elem[0];
 
+                    console.dir(container);
+
                     CANVAS_WIDTH = container.offsetParent.offsetWidth;
                     CANVAS_HEIGHT = container.offsetParent.offsetHeight;
 
@@ -97,10 +99,10 @@
                     windowHalfX = CANVAS_WIDTH / 2;
 
                     // scene, raycaster, camera, renderer
-                    camera = new THREE.PerspectiveCamera(50, CANVAS_WIDTH / CANVAS_HEIGHT, 1, 1000);
+                    camera = new THREE.PerspectiveCamera(60, CANVAS_WIDTH / CANVAS_HEIGHT, 1, 1000);
 
                     camera.position.y = 0;
-                    camera.position.z = 50;
+                    camera.position.z = 40;
                     camera.lookAt(scene.position);
 
                     // initializing mouse off center
@@ -164,7 +166,7 @@
                     }
                     viewFeed(selectedEye);
                 }
-                
+
                 function viewFeed(selected) {
                     console.log(selected.bodyposition);
 
@@ -247,10 +249,10 @@
 
                     // checks intersects for children of children
                     intersects = raycaster.intersectObjects(scene.children, true);
-                    
+
 
                     if (intersects.length > 0) {
-    
+
 
 
                         if (INTERSECTED != intersects[0].object) {
@@ -270,7 +272,7 @@
                         }
 
                     } else {
-                        
+
                          resetIntersected();
                     }
 

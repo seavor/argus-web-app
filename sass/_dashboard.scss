@@ -60,7 +60,7 @@
   }
 
   .body-suit {
-    width: 26%;
+    width: 30%;
     padding-right: 2.5vw;
 
     &-directive {
@@ -91,7 +91,7 @@
 
   .video-feed {
     @extend .clearfix;
-    width: 74%;
+    width: 70%;
 
     &-label {
       position: absolute;
@@ -108,15 +108,9 @@
     }
 
     &-directive {
-      width: 85%;
-      padding-bottom: 47.81%;
+      width: 100%;
+      padding-bottom: 56.25%;
       margin-bottom: 3%;
-    }
-
-    &-animation {
-      width: 15%;
-      height: 31.15vw;
-      padding-left: 2.5vw;
     }
 
     &-thumbnails {

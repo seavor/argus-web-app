@@ -40,7 +40,7 @@
             function releaseImage(image) {
                 console.log('Release Image: ', image.src);
 
-                if (AJPNG.ifNeeded()) {
+                if (AJPNG.ifNeeded() && assets.indexOf(image.src) !== -1) {
                     AJPNG.releaseCanvas(image);
                 }
 
