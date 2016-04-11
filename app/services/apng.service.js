@@ -51,11 +51,17 @@
                 var promises = [];
 
                 angular.forEach(assets, function(url) {
-                    var asset = inProgress[url] = (inProgress[url] || {
-                        req: $http.get(url)
+                    var defer = $q.defer();
+
+                        asset = inProgress[url] = (inProgress[url] || {
+                            src: url
+                        });
+
+                    $('<img />').attr('src', asset.src).load(function() {
+                        defer.resolve();
                     });
 
-                    promises.push(asset.req);
+                    promises.push(defer.promise);
                 });
 
                 return $q.all(promises).then(function() {
