@@ -17,6 +17,7 @@
             document.addEventListener("touchmove", onDocumentTouchMove, false);
             document.addEventListener("touchend", onDocumentTouchEnd, false);
             window.addEventListener("resize", onWindowResize, false);
+            document.addEventListener("scroll", onWindowResize, false);
             scope.$on("$destroy", function() {
                 document.removeEventListener("mousemove", onDocumentMouseMove, false);
                 document.removeEventListener("mousedown", onDocumentMouseDown, false);
@@ -24,6 +25,7 @@
                 document.removeEventListener("touchmove", onDocumentTouchMove, false);
                 document.removeEventListener("touchend", onDocumentTouchEnd, false);
                 window.removeEventListener("resize", onWindowResize, false);
+                document.removeEventListener("scroll", onWindowResize, false);
                 animate = noop;
             });
             function init() {
@@ -167,6 +169,14 @@
             function onWindowResize() {
                 CANVAS_WIDTH = elem.width();
                 CANVAS_HEIGHT = elem.height();
+                CANVAS_OFFSETX = elem.offset().left;
+                CANVAS_OFFSETY = elem.offset().top;
+                if (window.scrollX) {
+                    CANVAS_OFFSETX -= window.scrollX;
+                }
+                if (window.scrollY) {
+                    CANVAS_OFFSETY -= window.scrollY;
+                }
                 windowHalfX = CANVAS_WIDTH / 2;
                 camera.aspect = CANVAS_WIDTH / CANVAS_HEIGHT;
                 camera.updateProjectionMatrix();
