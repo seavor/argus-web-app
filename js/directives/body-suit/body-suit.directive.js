@@ -148,7 +148,7 @@
                         resetIntersected();
                         if (intersects[0].object.name.indexOf("eye") > -1) {
                             INTERSECTED = intersects[0].object;
-                            if (touchIsDown) {
+                            if (touchIsDown && !idling) {
                                 videoPlay();
                             } else {
                                 INTERSECTED.material.color.setHex(28351);
@@ -198,7 +198,7 @@
             }
             function onDocumentMouseMove(event) {
                 setMousePosition(event.clientX, event.clientY);
-                if (mouseIsDown === true) {
+                if (isOnCanvas(event.clientX, event.clientY) && mouseIsDown === true) {
                     mouseX = event.clientX - windowHalfX;
                     targetRotationX = targetRotationOnMouseDownX + (mouseX - mouseXOnMouseDown) * .02;
                 }
@@ -227,14 +227,14 @@
                 if (INTERSECTED) {
                     videoPlay();
                 }
-                if (event.touches.length == 1) {
+                if (isOnCanvas(touch.clientX, touch.clientY) && event.touches.length == 1) {
                     event.preventDefault();
                     mouseXOnMouseDown = event.touches[0].pageX - windowHalfX;
                     targetRotationOnMouseDownX = targetRotationX;
                 }
             }
             function onDocumentTouchMove(event) {
-                if (event.touches.length == 1) {
+                if (isOnCanvas(touch.clientX, touch.clientY) && event.touches.length == 1) {
                     event.preventDefault();
                     mouseX = event.touches[0].pageX - windowHalfX;
                     targetRotationX = targetRotationOnMouseDownX + (mouseX - mouseXOnMouseDown) * .05;

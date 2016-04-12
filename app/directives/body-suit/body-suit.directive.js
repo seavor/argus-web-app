@@ -250,7 +250,10 @@
                     // checks intersects for children of children
                     intersects = raycaster.intersectObjects(scene.children, true);
 
+
                     if (intersects.length > 0) {
+
+
 
                         if (INTERSECTED != intersects[0].object) {
                             resetIntersected();
@@ -259,7 +262,7 @@
                                 //change color
                                 INTERSECTED = intersects[ 0 ].object;
 
-                                if (touchIsDown) {
+                                if (touchIsDown && !idling) {
                                     videoPlay();
                                 } else {
                                     INTERSECTED.material.color.setHex( 0x006ebf );
@@ -337,7 +340,7 @@
                     setMousePosition(event.clientX, event.clientY);
 
                     // model rotation
-                    if (mouseIsDown === true) {
+                    if (isOnCanvas(event.clientX, event.clientY) && mouseIsDown === true) {
                         mouseX = event.clientX - windowHalfX;
                         targetRotationX = targetRotationOnMouseDownX + (mouseX - mouseXOnMouseDown) * 0.02;
                     }
@@ -382,7 +385,7 @@
                     if (INTERSECTED) { videoPlay(); }
 
                     //model rotation
-                    if (event.touches.length == 1) {
+                    if (isOnCanvas(touch.clientX, touch.clientY) && event.touches.length == 1) {
 
                         event.preventDefault();
 
@@ -393,7 +396,7 @@
 
                 function onDocumentTouchMove(event) {
                     //model rotation
-                    if (event.touches.length == 1) {
+                    if (isOnCanvas(touch.clientX, touch.clientY) && event.touches.length == 1) {
                         event.preventDefault();
 
                         mouseX = event.touches[0].pageX - windowHalfX;
