@@ -17,6 +17,7 @@
 
                 var scene = new THREE.Scene(),
                     group = new THREE.Object3D(),
+                    eyeGroup = new THREE.Object3D(),
                     mouse = new THREE.Vector2(),
                     renderer = new THREE.WebGLRenderer(),
                     raycaster = new THREE.Raycaster(),
@@ -46,7 +47,13 @@
                     selectedEye,
                     idleSince = Date.now(),
                     idling = false,
-                    IDLE_AFTER_MS = 1000 * 5;
+                    IDLE_AFTER_MS = 1000 * 2;
+
+                    IDLE_COLOR = 0x3366ff,
+                    ACTIVE_COLOR = 0x99b3ff,
+                    PLAYING_COLOR =  0x4dffa6;
+
+
 
                 $timeout(init);
 
@@ -140,34 +147,67 @@
                 }
 
                 function resetIntersected() {
-                    if (( selectedEye ) && (INTERSECTED == selectedEye)) {
-                        INTERSECTED = null;
-                        // info.innerHTML = '';
-                    } else {
-                        if ( INTERSECTED ) { INTERSECTED.material.color.setHex( 0x00ff00 ); }
-                        INTERSECTED = null;
-                        // info.innerHTML = '';
-                    }
+                    // if (( selectedEye ) && (INTERSECTED == selectedEye)) {
+                    //     INTERSECTED = null;
+                    //     // info.innerHTML = '';
+                    // } else {
+                    //     if ( INTERSECTED ) { INTERSECTED.material.color.setHex( 0x00ff00 ); }
+                    //     INTERSECTED = null;
+                    //     // info.innerHTML = '';
+                    // }
                 }
 
                 function videoPlay() {
                     if (!selectedEye) {
-                        INTERSECTED.material.color.setHex(0xff0000);
+                        INTERSECTED.material.color.setHex(PLAYING_COLOR);
+                        INTERSECTED.playing = true;
                         selectedEye = INTERSECTED;
+                        //console.log(selectedEye.playing);
                     }
 
                     if (( selectedEye ) && (INTERSECTED != selectedEye)) {
-                        selectedEye.material.color.setHex(0x00ff00);
-                        INTERSECTED.material.color.setHex(0xff0000);
+                        selectedEye.material.color.setHex(ACTIVE_COLOR);
+                        selectedEye.playing = false;
+                        INTERSECTED.material.color.setHex(PLAYING_COLOR);
+                        INTERSECTED.playing = true;
                         selectedEye = INTERSECTED;
+                        //console.log(selectedEye.playing);
                         // togglePlayStatus(selectedEye, INTERSECTED);
                     }
                     viewFeed(selectedEye);
                 }
 
-                function viewFeed(selected) {
-                    console.log(selected.bodyposition);
+                function changeState() {
+                    var eyes = suitSrvc.getEyes(),
+                        length = eyes.length,
+                        i,
+                        color;
 
+                    if (idling === true) {
+                            color = IDLE_COLOR;
+                            //console.log('active');
+                    }
+
+                    if (idling === false) {
+                            color = ACTIVE_COLOR;
+                            //console.log('active');
+                    }
+                                       
+                    for (i = 0; i < eyeGroup.children.length; i++){
+
+                        var child = eyeGroup.children[i];
+
+                        if (child.children[0].playing === false ) {
+                                                  
+                            child.children[0].material.color.setHex( color );
+                        
+                        }
+               
+                    }
+                }
+
+                function viewFeed(selected) {
+                    //console.log(selected.bodyposition);
                 }
 
                 function loadData(group, scene) {
@@ -217,17 +257,21 @@
                                 if ( child instanceof THREE.Mesh ) {
                                     var texture = new THREE.TextureLoader().load("obj/textures/eye.png");
                                     child.material = new THREE.MeshBasicMaterial( { 
-                                        color: 0x00ff00,
+                                        color: 0x0000ff,
                                         map: texture
                                     } );
                                     child.bodyposition = this.bodyposition;
+                                    child.playing = false;
+                                    //console.log(child);
                                 }
                             }.bind(this));
 
-                            group.add(object);
+
+                            eyeGroup.add(object);
+                            group.add(eyeGroup);
                             scene.add(group);
                         }.bind(currentEye), onProgress, onError );
-                    }
+                    } 
                 }
 
                 // render scene
@@ -237,12 +281,14 @@
 
                     if (idleTime > IDLE_AFTER_MS) {
                         idling = true;
+                        changeState();
                         group.rotation.y += 0.01;
                         mouse.x = 1;
                         mouse.y = 1;
                     } else {
                         //horizontal rotation
                         idling = false;
+                        changeState();
                         group.rotation.y += ( targetRotationX - group.rotation.y ) * 0.1;
                     }
 
@@ -333,7 +379,11 @@
 
                     idleSince = Date.now();
 
-                    if (idling) { group.rotation.y = 0; }
+                    if (idling) { 
+                        group.rotation.y = 0; 
+                        changeState();    
+
+                    }
                 }
 
                 function onDocumentMouseMove(event) {
