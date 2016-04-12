@@ -80,6 +80,7 @@
           position: absolute;
           top: 0;
           left: 0;
+          cursor: pointer;
         }
       }
     }
@@ -140,6 +141,7 @@
       margin-bottom: -5%;
       width: 25%;
       height: 100%;
+      cursor: pointer;
 
       &-image {
         height: 100%;
