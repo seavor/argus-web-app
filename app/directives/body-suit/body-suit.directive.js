@@ -64,6 +64,9 @@
                 // window resize listener
                 window.addEventListener('resize', onWindowResize, false);
 
+                //window scroll listener
+                document.addEventListener('scroll', onWindowResize, false);
+
                 // Clean up event listeners when scope view changes
                 scope.$on('$destroy', function() {
                     document.removeEventListener('mousemove', onDocumentMouseMove, false);
@@ -73,6 +76,7 @@
                     document.removeEventListener('touchend', onDocumentTouchEnd, false );
 
                     window.removeEventListener('resize', onWindowResize, false);
+                    document.removeEventListener('scroll', onWindowResize, false);
 
                     // void recursive rendering method
                     animate = noop;
@@ -288,10 +292,22 @@
                 /*************************************************/
 
                 function onWindowResize() {
-
+                    
                     CANVAS_WIDTH = elem.width();
                     CANVAS_HEIGHT = elem.height();
 
+                    // normalize mouse
+                    CANVAS_OFFSETX = elem.offset().left;
+                    CANVAS_OFFSETY = elem.offset().top;
+                    
+                    if (window.scrollX) {
+                        CANVAS_OFFSETX -= window.scrollX;
+                    }
+
+                    if (window.scrollY) {
+                        CANVAS_OFFSETY -= window.scrollY;
+                    }                 
+                    
                     windowHalfX = CANVAS_WIDTH / 2;
 
                     camera.aspect = CANVAS_WIDTH / CANVAS_HEIGHT;
