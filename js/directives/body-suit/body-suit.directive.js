@@ -137,8 +137,6 @@
                 if (idleTime > IDLE_AFTER_MS) {
                     idling = true;
                     group.rotation.y += .01;
-                    mouse.x = 1;
-                    mouse.y = 1;
                 } else {
                     idling = false;
                     group.rotation.y += (targetRotationX - group.rotation.y) * .1;

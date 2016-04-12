@@ -216,7 +216,7 @@
                             object.traverse( function ( child ) {
                                 if ( child instanceof THREE.Mesh ) {
                                     var texture = new THREE.TextureLoader().load("obj/textures/eye.png");
-                                    child.material = new THREE.MeshBasicMaterial( { 
+                                    child.material = new THREE.MeshBasicMaterial( {
                                         color: 0x00ff00,
                                         map: texture
                                     } );
@@ -238,8 +238,6 @@
                     if (idleTime > IDLE_AFTER_MS) {
                         idling = true;
                         group.rotation.y += 0.01;
-                        mouse.x = 1;
-                        mouse.y = 1;
                     } else {
                         //horizontal rotation
                         idling = false;
@@ -252,10 +250,7 @@
                     // checks intersects for children of children
                     intersects = raycaster.intersectObjects(scene.children, true);
 
-
                     if (intersects.length > 0) {
-
-
 
                         if (INTERSECTED != intersects[0].object) {
                             resetIntersected();
@@ -292,22 +287,22 @@
                 /*************************************************/
 
                 function onWindowResize() {
-                    
+
                     CANVAS_WIDTH = elem.width();
                     CANVAS_HEIGHT = elem.height();
 
                     // normalize mouse
                     CANVAS_OFFSETX = elem.offset().left;
                     CANVAS_OFFSETY = elem.offset().top;
-                    
+
                     if (window.scrollX) {
                         CANVAS_OFFSETX -= window.scrollX;
                     }
 
                     if (window.scrollY) {
                         CANVAS_OFFSETY -= window.scrollY;
-                    }                 
-                    
+                    }
+
                     windowHalfX = CANVAS_WIDTH / 2;
 
                     camera.aspect = CANVAS_WIDTH / CANVAS_HEIGHT;
