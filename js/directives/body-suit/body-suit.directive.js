@@ -9,7 +9,7 @@
         return directive;
         function linker(scope, elem, attrs) {
             console.info("Initializing Body Suit: ", scope);
-            var scene = new THREE.Scene(), group = new THREE.Object3D(), mouse = new THREE.Vector2(), renderer = new THREE.WebGLRenderer(), raycaster = new THREE.Raycaster(), camera, INTERSECTED, CANVAS_WIDTH, CANVAS_HEIGHT, CANVAS_OFFSETX, CANVAS_OFFSETY, targetRotationX = 0, targetRotationOnMouseDownX = 0, mouseX = 0, mouseXOnMouseDown = 0, mouseIsDown = false, touchIsDown = false, windowHalfX, selectedEye, idleSince = Date.now(), idling = false, IDLE_AFTER_MS = 1e3 * 5, container;
+            var scene = new THREE.Scene(), group = new THREE.Object3D(), mouse = new THREE.Vector2(), renderer = new THREE.WebGLRenderer(), raycaster = new THREE.Raycaster(), camera, INTERSECTED, CANVAS_WIDTH, CANVAS_HEIGHT, CANVAS_OFFSETX, CANVAS_OFFSETY, targetRotationX = 0, targetRotationOnMouseDownX = 0, mouseX = 0, mouseXOnMouseDown = 0, mouseIsDown = false, touchIsDown = false, windowHalfX, selectedEye, idleSince = Date.now(), idling = false, IDLE_AFTER_MS = 1e3 * 5;
             $timeout(init);
             document.addEventListener("mousemove", onDocumentMouseMove, false);
             document.addEventListener("mousedown", onDocumentMouseDown, false);
@@ -27,12 +27,10 @@
                 animate = noop;
             });
             function init() {
-                container = elem[0];
-                console.dir(container);
-                CANVAS_WIDTH = container.offsetParent.offsetWidth;
-                CANVAS_HEIGHT = container.offsetParent.offsetHeight;
-                CANVAS_OFFSETX = container.offsetParent.offsetLeft + container.offsetParent.offsetParent.offsetLeft;
-                CANVAS_OFFSETY = container.offsetParent.offsetTop + container.offsetParent.offsetParent.offsetTop;
+                CANVAS_WIDTH = elem.width();
+                CANVAS_HEIGHT = elem.height();
+                CANVAS_OFFSETX = elem.offset().left;
+                CANVAS_OFFSETY = elem.offset().top;
                 windowHalfX = CANVAS_WIDTH / 2;
                 camera = new THREE.PerspectiveCamera(60, CANVAS_WIDTH / CANVAS_HEIGHT, 1, 1e3);
                 camera.position.y = 0;
@@ -43,7 +41,7 @@
                 renderer.setSize(CANVAS_WIDTH, CANVAS_HEIGHT);
                 renderer.setPixelRatio(window.devicePixelRatio);
                 renderer.sortObjects = false;
-                container.appendChild(renderer.domElement);
+                elem.append(renderer.domElement);
                 loadData(group, scene);
                 animate();
             }
@@ -165,8 +163,8 @@
                 render();
             }
             function onWindowResize() {
-                CANVAS_WIDTH = container.offsetWidth;
-                CANVAS_HEIGHT = container.offsetHeight;
+                CANVAS_WIDTH = elem.width();
+                CANVAS_HEIGHT = elem.height();
                 windowHalfX = CANVAS_WIDTH / 2;
                 camera.aspect = CANVAS_WIDTH / CANVAS_HEIGHT;
                 camera.updateProjectionMatrix();

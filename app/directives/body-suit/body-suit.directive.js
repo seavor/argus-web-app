@@ -46,9 +46,7 @@
                     selectedEye,
                     idleSince = Date.now(),
                     idling = false,
-                    IDLE_AFTER_MS = 1000 * 5,
-
-                    container;
+                    IDLE_AFTER_MS = 1000 * 5;
 
                 $timeout(init);
 
@@ -85,16 +83,12 @@
                 /*************************************************/
 
                 function init() {
-                    container = elem[0];
-
-                    console.dir(container);
-
-                    CANVAS_WIDTH = container.offsetParent.offsetWidth;
-                    CANVAS_HEIGHT = container.offsetParent.offsetHeight;
+                    CANVAS_WIDTH = elem.width();
+                    CANVAS_HEIGHT = elem.height();
 
                     // normalize mouse
-                    CANVAS_OFFSETX = container.offsetParent.offsetLeft + container.offsetParent.offsetParent.offsetLeft;
-                    CANVAS_OFFSETY = container.offsetParent.offsetTop + container.offsetParent.offsetParent.offsetTop;
+                    CANVAS_OFFSETX = elem.offset().left;
+                    CANVAS_OFFSETY = elem.offset().top;
 
                     windowHalfX = CANVAS_WIDTH / 2;
 
@@ -113,7 +107,7 @@
                     renderer.setPixelRatio(window.devicePixelRatio);
                     renderer.sortObjects = false;
 
-                    container.appendChild(renderer.domElement);
+                    elem.append(renderer.domElement);
 
                     loadData(group, scene);
 
@@ -291,8 +285,8 @@
 
                 function onWindowResize() {
 
-                    CANVAS_WIDTH = container.offsetWidth;
-                    CANVAS_HEIGHT = container.offsetHeight;
+                    CANVAS_WIDTH = elem.width();
+                    CANVAS_HEIGHT = elem.height();
 
                     windowHalfX = CANVAS_WIDTH / 2;
 
