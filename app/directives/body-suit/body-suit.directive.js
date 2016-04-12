@@ -96,7 +96,7 @@
                     camera = new THREE.PerspectiveCamera(60, CANVAS_WIDTH / CANVAS_HEIGHT, 1, 1000);
 
                     camera.position.y = 0;
-                    camera.position.z = 40;
+                    camera.position.z = 35;
                     camera.lookAt(scene.position);
 
                     // initializing mouse off center
@@ -211,7 +211,11 @@
 
                             object.traverse( function ( child ) {
                                 if ( child instanceof THREE.Mesh ) {
-                                    child.material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+                                    var texture = new THREE.TextureLoader().load("obj/textures/eye.png");
+                                    child.material = new THREE.MeshBasicMaterial( { 
+                                        color: 0x00ff00,
+                                        map: texture
+                                    } );
                                     child.bodyposition = this.bodyposition;
                                 }
                             }.bind(this));
