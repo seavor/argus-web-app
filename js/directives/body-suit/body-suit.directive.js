@@ -34,7 +34,7 @@
                 windowHalfX = CANVAS_WIDTH / 2;
                 camera = new THREE.PerspectiveCamera(60, CANVAS_WIDTH / CANVAS_HEIGHT, 1, 1e3);
                 camera.position.y = 0;
-                camera.position.z = 40;
+                camera.position.z = 35;
                 camera.lookAt(scene.position);
                 mouse.x = 1;
                 mouse.y = 1;
@@ -117,8 +117,10 @@
                     eyeLoader.load("obj/eyes/" + eyes[i].filename, function(object) {
                         object.traverse(function(child) {
                             if (child instanceof THREE.Mesh) {
+                                var texture = new THREE.TextureLoader().load("obj/textures/eye.png");
                                 child.material = new THREE.MeshBasicMaterial({
-                                    color: 65280
+                                    color: 65280,
+                                    map: texture
                                 });
                                 child.bodyposition = this.bodyposition;
                             }
