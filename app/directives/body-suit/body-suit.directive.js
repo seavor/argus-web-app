@@ -90,14 +90,7 @@
                 /*************************************************/
 
                 function init() {
-                    CANVAS_WIDTH = elem.width();
-                    CANVAS_HEIGHT = elem.height();
-
-                    // normalize mouse
-                    CANVAS_OFFSETX = elem.offset().left;
-                    CANVAS_OFFSETY = elem.offset().top;
-
-                    windowHalfX = CANVAS_WIDTH / 2;
+                    setCanvasSize();
 
                     // scene, raycaster, camera, renderer
                     camera = new THREE.PerspectiveCamera(60, CANVAS_WIDTH / CANVAS_HEIGHT, 1, 1000);
@@ -119,6 +112,110 @@
                     loadData(group, scene);
 
                     animate();
+                }
+
+                function animate() {
+                    requestAnimationFrame(animate);
+                    render();
+                }
+
+                // render scene
+                function render() {
+                    var intersects,
+                        idleTime = Date.now() - idleSince;
+
+                    if (idleTime > IDLE_AFTER_MS) {
+                        idling = true;
+                        changeState();
+                        group.rotation.y += 0.01;
+                    } else {
+                        //horizontal rotation
+                        idling = false;
+                        changeState();
+                        group.rotation.y += ( targetRotationX - group.rotation.y ) * 0.1;
+                    }
+
+                    // find intersections
+                    raycaster.setFromCamera(mouse, camera);
+
+                    // checks intersects for children of children
+                    intersects = raycaster.intersectObjects(scene.children, true);
+
+                    if (intersects.length > 0) {
+                        if (INTERSECTED != intersects[0].object) {
+                            resetIntersected();
+                            // find eyes
+                            if (intersects[ 0 ].object.name.indexOf('eye') > -1 ) {
+                                //change color
+                                INTERSECTED = intersects[ 0 ].object;
+
+                                if (touchIsDown && !idling) {
+                                    videoPlay();
+                                } else {
+                                    INTERSECTED.material.color.setHex( 0x006ebf );
+                                }
+                            }
+                        }
+                    } else {
+                         resetIntersected();
+                    }
+
+                    renderer.render(scene, camera);
+                }
+
+                function videoPlay() {
+                    if (!selectedEye) {
+                        INTERSECTED.material.color.setHex(PLAYING_COLOR);
+                        INTERSECTED.playing = true;
+                        selectedEye = INTERSECTED;
+                        //console.log(selectedEye.playing);
+                    }
+
+                    if (( selectedEye ) && (INTERSECTED != selectedEye)) {
+                        selectedEye.material.color.setHex(ACTIVE_COLOR);
+                        selectedEye.playing = false;
+                        INTERSECTED.material.color.setHex(PLAYING_COLOR);
+                        INTERSECTED.playing = true;
+                        selectedEye = INTERSECTED;
+                        //console.log(selectedEye.playing);
+                        // togglePlayStatus(selectedEye, INTERSECTED);
+                    }
+                    viewFeed(selectedEye);
+                }
+
+                function changeState() {
+                    var color = idling ? IDLE_COLOR : ACTIVE_COLOR,
+                        length = eyeGroup.children.length,
+                        i = 0,
+
+                        child;
+
+                    for (i; i < length; i++){
+                        child = eyeGroup.children[i];
+
+                        if (child.children[0].playing === false ) {
+                            child.children[0].material.color.setHex( color );
+                        }
+                    }
+                }
+
+                function viewFeed(selected) {
+                    // console.log(selected.bodyposition);
+                }
+
+                /*************************************************/
+                /* Helper Methods
+                /*************************************************/
+
+                function setCanvasSize() {
+                    CANVAS_WIDTH = elem.width();
+                    CANVAS_HEIGHT = elem.height();
+
+                    // normalize mouse
+                    CANVAS_OFFSETX = elem.offset().left - (window.scrollX || 0);
+                    CANVAS_OFFSETY = elem.offset().top - (window.scrollY || 0);
+
+                    windowHalfX = CANVAS_WIDTH / 2;
                 }
 
                 // normalize mouse position for intersection
@@ -151,59 +248,6 @@
                     //     INTERSECTED = null;
                     //     // info.innerHTML = '';
                     // }
-                }
-
-                function videoPlay() {
-                    if (!selectedEye) {
-                        INTERSECTED.material.color.setHex(PLAYING_COLOR);
-                        INTERSECTED.playing = true;
-                        selectedEye = INTERSECTED;
-                        //console.log(selectedEye.playing);
-                    }
-
-                    if (( selectedEye ) && (INTERSECTED != selectedEye)) {
-                        selectedEye.material.color.setHex(ACTIVE_COLOR);
-                        selectedEye.playing = false;
-                        INTERSECTED.material.color.setHex(PLAYING_COLOR);
-                        INTERSECTED.playing = true;
-                        selectedEye = INTERSECTED;
-                        //console.log(selectedEye.playing);
-                        // togglePlayStatus(selectedEye, INTERSECTED);
-                    }
-                    viewFeed(selectedEye);
-                }
-
-                function changeState() {
-                    var eyes = suitSrvc.getEyes(),
-                        length = eyes.length,
-                        i,
-                        color;
-
-                    if (idling === true) {
-                            color = IDLE_COLOR;
-                            //console.log('active');
-                    }
-
-                    if (idling === false) {
-                            color = ACTIVE_COLOR;
-                            //console.log('active');
-                    }
-
-                    for (i = 0; i < eyeGroup.children.length; i++){
-
-                        var child = eyeGroup.children[i];
-
-                        if (child.children[0].playing === false ) {
-
-                            child.children[0].material.color.setHex( color );
-
-                        }
-
-                    }
-                }
-
-                function viewFeed(selected) {
-                    //console.log(selected.bodyposition);
                 }
 
                 function loadData(group, scene) {
@@ -270,91 +314,17 @@
                     }
                 }
 
-                // render scene
-                function render() {
-                    var intersects,
-                        idleTime = Date.now() - idleSince;
-
-                    if (idleTime > IDLE_AFTER_MS) {
-                        idling = true;
-                        changeState();
-                        group.rotation.y += 0.01;
-                    } else {
-                        //horizontal rotation
-                        idling = false;
-                        changeState();
-                        group.rotation.y += ( targetRotationX - group.rotation.y ) * 0.1;
-                    }
-
-                    // find intersections
-                    raycaster.setFromCamera(mouse, camera);
-
-                    // checks intersects for children of children
-                    intersects = raycaster.intersectObjects(scene.children, true);
-
-
-                    if (intersects.length > 0) {
-
-
-
-                        if (INTERSECTED != intersects[0].object) {
-                            resetIntersected();
-                            // find eyes
-                            if (intersects[ 0 ].object.name.indexOf('eye') > -1 ) {
-                                //change color
-                                INTERSECTED = intersects[ 0 ].object;
-
-                                if (touchIsDown && !idling) {
-                                    videoPlay();
-                                } else {
-                                    INTERSECTED.material.color.setHex( 0x006ebf );
-                                }
-
-                            }
-                        }
-
-                    } else {
-
-                         resetIntersected();
-                    }
-
-                    renderer.render(scene, camera);
-
-                }
-
-                function animate() {
-                    requestAnimationFrame(animate);
-                    render();
-                }
-
                 /*************************************************/
                 /* Event Handlers
                 /*************************************************/
 
                 function onWindowResize() {
-
-                    CANVAS_WIDTH = elem.width();
-                    CANVAS_HEIGHT = elem.height();
-
-                    // normalize mouse
-                    CANVAS_OFFSETX = elem.offset().left;
-                    CANVAS_OFFSETY = elem.offset().top;
-
-                    if (window.scrollX) {
-                        CANVAS_OFFSETX -= window.scrollX;
-                    }
-
-                    if (window.scrollY) {
-                        CANVAS_OFFSETY -= window.scrollY;
-                    }
-
-                    windowHalfX = CANVAS_WIDTH / 2;
+                    setCanvasSize();
 
                     camera.aspect = CANVAS_WIDTH / CANVAS_HEIGHT;
                     camera.updateProjectionMatrix();
 
                     renderer.setSize(CANVAS_WIDTH, CANVAS_HEIGHT);
-
                 }
 
                 function onDocumentMouseDown(event) {
@@ -362,7 +332,7 @@
 
                     document.addEventListener('mousemove', onDocumentMouseMove, false);
                     document.addEventListener('mouseup', onDocumentMouseUp, false);
-                    document.addEventListener('mouseout', onDocumentMouseOut, false);
+                    document.addEventListener('mouseout', onDocumentMouseUp, false);
 
                     //model rotation
                     mouseIsDown = true;
@@ -376,45 +346,30 @@
                     if (idling) {
                         group.rotation.y = 0;
                         changeState();
-
                     }
                 }
 
                 function onDocumentMouseMove(event) {
-
                     // intersection
                     setMousePosition(event.clientX, event.clientY);
 
                     // model rotation
-                    if (isOnCanvas(event.clientX, event.clientY) && mouseIsDown === true) {
+                    if (mouseIsDown === true && isOnCanvas(event.clientX, event.clientY)) {
                         mouseX = event.clientX - windowHalfX;
                         targetRotationX = targetRotationOnMouseDownX + (mouseX - mouseXOnMouseDown) * 0.02;
                     }
-
                 }
 
                 function onDocumentMouseUp(event) {
-
                     document.removeEventListener('mouseup', onDocumentMouseUp, false);
-                    document.removeEventListener('mouseout', onDocumentMouseOut, false);
+                    document.removeEventListener('mouseout', onDocumentMouseUp, false);
 
                     // model rotation
                     mouseIsDown = false;
-
-                }
-
-                function onDocumentMouseOut(event) {
-
-                    document.removeEventListener('mouseup', onDocumentMouseUp, false);
-                    document.removeEventListener('mouseout', onDocumentMouseOut, false);
-
-                    // model rotation
-                    mouseIsDown = false;
-
                 }
 
                 function onDocumentTouchStart(event) {
-                    var touch;
+                    var touch = event.touches[0];
 
                     touchIsDown = true;
 
@@ -423,16 +378,14 @@
                     if (idling) { group.rotation.y = 0; }
 
                     // intersection
-                    if (event.touches.length == 1) {
-                        touch = event.touches[0];
+                    if (touch) {
                         setMousePosition(touch.clientX, touch.clientY);
                     }
 
                     if (INTERSECTED) { videoPlay(); }
 
                     //model rotation
-                    if (isOnCanvas(touch.clientX, touch.clientY) && event.touches.length == 1) {
-
+                    if (touch && isOnCanvas(touch.clientX, touch.clientY)) {
                         event.preventDefault();
 
                         mouseXOnMouseDown = event.touches[0].pageX - windowHalfX;
@@ -441,11 +394,13 @@
                 }
 
                 function onDocumentTouchMove(event) {
+                    var touch = event.touches[0];
+
                     //model rotation
-                    if (isOnCanvas(touch.clientX, touch.clientY) && event.touches.length == 1) {
+                    if (touch && isOnCanvas(touch.clientX, touch.clientY)) {
                         event.preventDefault();
 
-                        mouseX = event.touches[0].pageX - windowHalfX;
+                        mouseX = touch.pageX - windowHalfX;
                         targetRotationX = targetRotationOnMouseDownX + (mouseX - mouseXOnMouseDown) * 0.05;
                     }
                 }
