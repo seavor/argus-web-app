@@ -51,9 +51,7 @@
 
                     IDLE_COLOR = 0x3366ff,
                     ACTIVE_COLOR = 0x99b3ff,
-                    PLAYING_COLOR =  0x4dffa6;
-
-
+                    PLAYING_COLOR = 0x4dffa6;
 
                 $timeout(init);
 
@@ -67,12 +65,10 @@
                 document.addEventListener('touchstart', onDocumentTouchStart, false);
                 document.addEventListener('touchmove', onDocumentTouchMove, false);
                 document.addEventListener('touchend', onDocumentTouchEnd, false );
+                document.addEventListener('scroll', onWindowResize, false);
 
                 // window resize listener
                 window.addEventListener('resize', onWindowResize, false);
-
-                //window scroll listener
-                document.addEventListener('scroll', onWindowResize, false);
 
                 // Clean up event listeners when scope view changes
                 scope.$on('$destroy', function() {
@@ -81,9 +77,9 @@
                     document.removeEventListener('touchstart', onDocumentTouchStart, false);
                     document.removeEventListener('touchmove', onDocumentTouchMove, false);
                     document.removeEventListener('touchend', onDocumentTouchEnd, false );
+                    document.removeEventListener('scroll', onWindowResize, false);
 
                     window.removeEventListener('resize', onWindowResize, false);
-                    document.removeEventListener('scroll', onWindowResize, false);
 
                     // void recursive rendering method
                     animate = noop;
@@ -178,7 +174,6 @@
                 function toggleIdleState() {
                     var color;
 
-
                     // toggle idle state
                     idling = !idling;
 
@@ -204,7 +199,7 @@
                         if (child.children[0].playing === false ) {
                             child.children[0].material.color.setHex( color );
                         }
-               
+
                     }
                 }
 
@@ -256,7 +251,7 @@
                             object.traverse( function ( child ) {
                                 if ( child instanceof THREE.Mesh ) {
                                     var texture = new THREE.TextureLoader().load("obj/textures/eye.png");
-                                    child.material = new THREE.MeshBasicMaterial( { 
+                                    child.material = new THREE.MeshBasicMaterial( {
                                         color: 0x0000ff,
                                         map: texture
                                     } );
@@ -271,7 +266,7 @@
                             group.add(eyeGroup);
                             scene.add(group);
                         }.bind(currentEye), onProgress, onError );
-                    } 
+                    }
                 }
 
                 // render scene
@@ -307,7 +302,7 @@
                                 //change color
                                 INTERSECTED = intersects[ 0 ].object;
 
-                                if (touchIsDown) {
+                                if (touchIsDown && !idling) {
                                     videoPlay();
                                 } else {
                                     INTERSECTED.material.color.setHex( 0x006ebf );
@@ -339,22 +334,22 @@
                 /*************************************************/
 
                 function onWindowResize() {
-                    
+
                     CANVAS_WIDTH = elem.width();
                     CANVAS_HEIGHT = elem.height();
 
                     // normalize mouse
                     CANVAS_OFFSETX = elem.offset().left;
                     CANVAS_OFFSETY = elem.offset().top;
-                    
+
                     if (window.scrollX) {
                         CANVAS_OFFSETX -= window.scrollX;
                     }
 
                     if (window.scrollY) {
                         CANVAS_OFFSETY -= window.scrollY;
-                    }                 
-                    
+                    }
+
                     windowHalfX = CANVAS_WIDTH / 2;
 
                     camera.aspect = CANVAS_WIDTH / CANVAS_HEIGHT;
@@ -383,7 +378,6 @@
                     if (idling) { 
                         toggleIdleState();
                         group.rotation.y = 0;
-
                     }
                 }
 
@@ -393,7 +387,7 @@
                     setMousePosition(event.clientX, event.clientY);
 
                     // model rotation
-                    if (mouseIsDown === true) {
+                    if (isOnCanvas(event.clientX, event.clientY) && mouseIsDown === true) {
                         mouseX = event.clientX - windowHalfX;
                         targetRotationX = targetRotationOnMouseDownX + (mouseX - mouseXOnMouseDown) * 0.02;
                     }
@@ -436,7 +430,7 @@
                     if (INTERSECTED) { videoPlay(); }
 
                     //model rotation
-                    if (event.touches.length == 1) {
+                    if (isOnCanvas(touch.clientX, touch.clientY) && event.touches.length == 1) {
 
                         event.preventDefault();
 
@@ -453,7 +447,7 @@
 
                 function onDocumentTouchMove(event) {
                     //model rotation
-                    if (event.touches.length == 1) {
+                    if (isOnCanvas(touch.clientX, touch.clientY) && event.touches.length == 1) {
                         event.preventDefault();
 
                         mouseX = event.touches[0].pageX - windowHalfX;
