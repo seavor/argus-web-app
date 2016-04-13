@@ -9,3 +9,14 @@
 
 # Local Files
 /designs
+
+# Server Files
+.bash_history
+.bash_logout
+.bashrc
+.cache
+.npm
+obj
+.profile
+.ssh
+.viminfo
