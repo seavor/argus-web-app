@@ -59,7 +59,7 @@ io.sockets.on('connection',
         web.push(socket);
       }
 
-      socket.emit("pis", pis);
+      sendImages(socket);
     });
 
     // Web client wants specific high quality stream
@@ -103,25 +103,27 @@ io.sockets.on('connection',
 // Send out the images every 2 seconds
 var lowQualityInterval = setInterval(function() {
   console.log("Sending low");
-  var images, w, p;
-
   // Loop thru connected clients
-  for (w = 0; web.length > w; w++) {
-    images = [];
-
-    // Store non-mainFeed images
-    for (p = 0; pis.length > p; p++) {
-      if (pis[p].lastimage && pis[p].id !== web[w].mainFeed) {
-        images.push({
-          "pi_id": pis[p].id,
-          "label": pis[p].label,
-          "imageData": pis[p].lastimage
-        });
-      }
-    }
-
-    // Push image set to client
-    web[w].emit("pis", images);
+  for (var i = 0; web.length > i; i++) {
+    sendImages(web[i]);
   }
 }, 2000);
+
+function sendImages(socket) {
+  var images = [];
+
+  // Store non-mainFeed images
+  for (var i = 0; pis.length > i; i++) {
+    if (pis[i].lastimage && pis[i].id !== socket.mainFeed) {
+      images.push({
+        "pi_id": pis[i].id,
+        "label": pis[i].label,
+        "imageData": pis[i].lastimage
+      });
+    }
+  }
+
+  // Push image set to client
+  socket.emit("pis", images);
+}
 
