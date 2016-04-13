@@ -39,7 +39,7 @@
                 windowHalfX = CANVAS_WIDTH / 2;
                 camera = new THREE.PerspectiveCamera(60, CANVAS_WIDTH / CANVAS_HEIGHT, 1, 200);
                 camera.position.y = 0;
-                camera.position.z = 35;
+                camera.position.z = 40;
                 camera.lookAt(scene.position);
                 mouse.x = 1;
                 mouse.y = 1;
@@ -109,13 +109,13 @@
                             child.material = new THREE.MeshBasicMaterial({
                                 color: 15592680,
                                 wireframe: true,
-                                wireframeLinewidth: 1
+                                wireframeLinewidth: .5
                             });
                         }
                     });
                     group.add(object);
                 }, onProgress, onError);
-                loader.load("obj/argus2.obj", function(object) {
+                loader.load("obj/argus.obj", function(object) {
                     object.traverse(function(child) {
                         if (child instanceof THREE.Mesh) {
                             child.material = new THREE.MeshBasicMaterial({
