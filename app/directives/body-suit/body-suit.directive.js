@@ -96,7 +96,7 @@
                     camera = new THREE.PerspectiveCamera(60, CANVAS_WIDTH / CANVAS_HEIGHT, 1, 200);
 
                     camera.position.y = 0;
-                    camera.position.z = 35;
+                    camera.position.z = 40;
                     camera.lookAt(scene.position);
 
                     // initializing mouse off center
@@ -285,7 +285,7 @@
                     loader.load('obj/argus.obj', function(object) {
                         object.traverse(function(child) {
                             if (child instanceof THREE.Mesh) {
-                                child.material = new THREE.MeshBasicMaterial({ color: 0xedece8, wireframe: true, wireframeLinewidth: 1 });
+                                child.material = new THREE.MeshBasicMaterial({ color: 0xedece8, wireframe: true, wireframeLinewidth: 0.5 });
                             }
                         });
 
@@ -293,7 +293,7 @@
                     }, onProgress, onError);
 
                     // internal solid argus
-                    loader.load('obj/argus2.obj', function(object) {
+                    loader.load('obj/argus.obj', function(object) {
                         object.traverse(function(child) {
                             if (child instanceof THREE.Mesh) {
                                 child.material = new THREE.MeshBasicMaterial({ color: 0x222222 });
