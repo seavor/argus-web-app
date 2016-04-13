@@ -32,11 +32,7 @@
                 animate = noop;
             });
             function init() {
-                CANVAS_WIDTH = elem.width();
-                CANVAS_HEIGHT = elem.height();
-                CANVAS_OFFSETX = elem.offset().left;
-                CANVAS_OFFSETY = elem.offset().top;
-                windowHalfX = CANVAS_WIDTH / 2;
+                setCanvasSize();
                 camera = new THREE.PerspectiveCamera(60, CANVAS_WIDTH / CANVAS_HEIGHT, 1, 200);
                 camera.position.y = 0;
                 camera.position.z = 40;
@@ -50,21 +46,39 @@
                 loadData(group, scene);
                 animate();
             }
-            function setMousePosition(clientX, clientY) {
-                var normalizedX, normalizedY;
-                if (isOnCanvas(clientX, clientY)) {
-                    normalizedX = clientX - CANVAS_OFFSETX;
-                    normalizedY = clientY - CANVAS_OFFSETY;
-                    mouse.x = normalizedX / CANVAS_WIDTH * 2 - 1;
-                    mouse.y = -(normalizedY / CANVAS_HEIGHT) * 2 + 1;
-                }
+            function animate() {
+                requestAnimationFrame(animate);
+                render();
             }
-            function isOnCanvas(clientX, clientY) {
-                if (clientX > CANVAS_OFFSETX && clientX < CANVAS_OFFSETX + CANVAS_WIDTH && (clientY > CANVAS_OFFSETY && clientY < CANVAS_OFFSETY + CANVAS_HEIGHT)) {
-                    return true;
+            function render() {
+                var intersects, idleTime = Date.now() - idleSince;
+                if (idleTime > IDLE_AFTER_MS) {
+                    if (idling === false) {
+                        toggleIdleState();
+                    }
+                    group.rotation.y += .01;
+                } else {
+                    group.rotation.y += (targetRotationX - group.rotation.y) * .1;
                 }
+                raycaster.setFromCamera(mouse, camera);
+                intersects = raycaster.intersectObjects(scene.children, true);
+                if (intersects.length > 0) {
+                    if (INTERSECTED != intersects[0].object) {
+                        resetIntersected();
+                        if (intersects[0].object.name.indexOf("eye") > -1) {
+                            INTERSECTED = intersects[0].object;
+                            if (touchIsDown && !idling) {
+                                videoPlay();
+                            } else {
+                                INTERSECTED.material.color.setHex(28351);
+                            }
+                        }
+                    }
+                } else {
+                    resetIntersected();
+                }
+                renderer.render(scene, camera);
             }
-            function resetIntersected() {}
             function videoPlay() {
                 if (!selectedEye) {
                     INTERSECTED.material.color.setHex(PLAYING_COLOR);
@@ -91,6 +105,23 @@
                 color = idling ? IDLE_COLOR : ACTIVE_COLOR;
                 setEyeColor(color);
             }
+            function viewFeed(selected) {}
+            function setCanvasSize() {
+                CANVAS_WIDTH = elem.width();
+                CANVAS_HEIGHT = elem.height();
+                CANVAS_OFFSETX = elem.offset().left - (window.scrollX || 0);
+                CANVAS_OFFSETY = elem.offset().top - (window.scrollY || 0);
+                windowHalfX = CANVAS_WIDTH / 2;
+            }
+            function setMousePosition(clientX, clientY) {
+                var normalizedX, normalizedY;
+                if (isOnCanvas(clientX, clientY)) {
+                    normalizedX = clientX - CANVAS_OFFSETX;
+                    normalizedY = clientY - CANVAS_OFFSETY;
+                    mouse.x = normalizedX / CANVAS_WIDTH * 2 - 1;
+                    mouse.y = -(normalizedY / CANVAS_HEIGHT) * 2 + 1;
+                }
+            }
             function setEyeColor(color) {
                 var i, child;
                 for (i = 0; i < eyeGroup.children.length; i++) {
@@ -100,7 +131,12 @@
                     }
                 }
             }
-            function viewFeed(selected) {}
+            function isOnCanvas(clientX, clientY) {
+                if (clientX > CANVAS_OFFSETX && clientX < CANVAS_OFFSETX + CANVAS_WIDTH && (clientY > CANVAS_OFFSETY && clientY < CANVAS_OFFSETY + CANVAS_HEIGHT)) {
+                    return true;
+                }
+            }
+            function resetIntersected() {}
             function loadData(group, scene) {
                 var manager = new THREE.LoadingManager(), loader = new THREE.OBJLoader(manager), eyes = suitSrvc.getEyes(), length = eyes.length, i, currentEye, eyeLoader;
                 loader.load("obj/argus.obj", function(object) {
@@ -147,51 +183,8 @@
                     }.bind(currentEye), onProgress, onError);
                 }
             }
-            function render() {
-                var intersects, idleTime = Date.now() - idleSince;
-                if (idleTime > IDLE_AFTER_MS) {
-                    if (idling === false) {
-                        toggleIdleState();
-                    }
-                    group.rotation.y += .01;
-                } else {
-                    group.rotation.y += (targetRotationX - group.rotation.y) * .1;
-                }
-                raycaster.setFromCamera(mouse, camera);
-                intersects = raycaster.intersectObjects(scene.children, true);
-                if (intersects.length > 0) {
-                    if (INTERSECTED != intersects[0].object) {
-                        resetIntersected();
-                        if (intersects[0].object.name.indexOf("eye") > -1) {
-                            INTERSECTED = intersects[0].object;
-                            if (touchIsDown && !idling) {
-                                videoPlay();
-                            } else {
-                                INTERSECTED.material.color.setHex(28351);
-                            }
-                        }
-                    }
-                } else {
-                    resetIntersected();
-                }
-                renderer.render(scene, camera);
-            }
-            function animate() {
-                requestAnimationFrame(animate);
-                render();
-            }
             function onWindowResize() {
-                CANVAS_WIDTH = elem.width();
-                CANVAS_HEIGHT = elem.height();
-                CANVAS_OFFSETX = elem.offset().left;
-                CANVAS_OFFSETY = elem.offset().top;
-                if (window.scrollX) {
-                    CANVAS_OFFSETX -= window.scrollX;
-                }
-                if (window.scrollY) {
-                    CANVAS_OFFSETY -= window.scrollY;
-                }
-                windowHalfX = CANVAS_WIDTH / 2;
+                setCanvasSize();
                 camera.aspect = CANVAS_WIDTH / CANVAS_HEIGHT;
                 camera.updateProjectionMatrix();
                 renderer.setSize(CANVAS_WIDTH, CANVAS_HEIGHT);
@@ -200,7 +193,7 @@
                 event.preventDefault();
                 document.addEventListener("mousemove", onDocumentMouseMove, false);
                 document.addEventListener("mouseup", onDocumentMouseUp, false);
-                document.addEventListener("mouseout", onDocumentMouseOut, false);
+                document.addEventListener("mouseout", onDocumentMouseUp, false);
                 mouseIsDown = true;
                 mouseXOnMouseDown = event.clientX - windowHalfX;
                 targetRotationOnMouseDownX = targetRotationX;
@@ -215,33 +208,27 @@
             }
             function onDocumentMouseMove(event) {
                 setMousePosition(event.clientX, event.clientY);
-                if (isOnCanvas(event.clientX, event.clientY) && mouseIsDown === true) {
+                if (mouseIsDown === true && isOnCanvas(event.clientX, event.clientY)) {
                     mouseX = event.clientX - windowHalfX;
                     targetRotationX = targetRotationOnMouseDownX + (mouseX - mouseXOnMouseDown) * .02;
                 }
             }
             function onDocumentMouseUp(event) {
                 document.removeEventListener("mouseup", onDocumentMouseUp, false);
-                document.removeEventListener("mouseout", onDocumentMouseOut, false);
-                mouseIsDown = false;
-            }
-            function onDocumentMouseOut(event) {
-                document.removeEventListener("mouseup", onDocumentMouseUp, false);
-                document.removeEventListener("mouseout", onDocumentMouseOut, false);
+                document.removeEventListener("mouseout", onDocumentMouseUp, false);
                 mouseIsDown = false;
             }
             function onDocumentTouchStart(event) {
-                var touch;
+                var touch = event.touches[0];
                 touchIsDown = true;
                 idleSince = Date.now();
-                if (event.touches.length == 1) {
-                    touch = event.touches[0];
+                if (touch) {
                     setMousePosition(touch.clientX, touch.clientY);
                 }
                 if (INTERSECTED) {
                     videoPlay();
                 }
-                if (isOnCanvas(touch.clientX, touch.clientY) && event.touches.length == 1) {
+                if (touch && isOnCanvas(touch.clientX, touch.clientY)) {
                     event.preventDefault();
                     mouseXOnMouseDown = event.touches[0].pageX - windowHalfX;
                     targetRotationOnMouseDownX = targetRotationX;
@@ -252,9 +239,10 @@
                 }
             }
             function onDocumentTouchMove(event) {
-                if (isOnCanvas(touch.clientX, touch.clientY) && event.touches.length == 1) {
+                var touch = event.touches[0];
+                if (touch && isOnCanvas(touch.clientX, touch.clientY)) {
                     event.preventDefault();
-                    mouseX = event.touches[0].pageX - windowHalfX;
+                    mouseX = touch.pageX - windowHalfX;
                     targetRotationX = targetRotationOnMouseDownX + (mouseX - mouseXOnMouseDown) * .05;
                 }
             }

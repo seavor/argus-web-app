@@ -90,14 +90,7 @@
                 /*************************************************/
 
                 function init() {
-                    CANVAS_WIDTH = elem.width();
-                    CANVAS_HEIGHT = elem.height();
-
-                    // normalize mouse
-                    CANVAS_OFFSETX = elem.offset().left;
-                    CANVAS_OFFSETY = elem.offset().top;
-
-                    windowHalfX = CANVAS_WIDTH / 2;
+                    setCanvasSize();
 
                     // scene, raycaster, camera, renderer
                     camera = new THREE.PerspectiveCamera(60, CANVAS_WIDTH / CANVAS_HEIGHT, 1, 200);
@@ -121,36 +114,60 @@
                     animate();
                 }
 
-                // normalize mouse position for intersection
-                function setMousePosition(clientX, clientY) {
-                    var normalizedX,
-                        normalizedY;
-
-                    if (isOnCanvas(clientX, clientY)) {
-                        normalizedX = clientX - CANVAS_OFFSETX;
-                        normalizedY = clientY - CANVAS_OFFSETY;
-                        mouse.x = (normalizedX / CANVAS_WIDTH) * 2 - 1;
-                        mouse.y = -(normalizedY / CANVAS_HEIGHT) * 2 + 1;
-                    }
+                function animate() {
+                    requestAnimationFrame(animate);
+                    render();
                 }
 
-                // detect if on canvas
-                function isOnCanvas(clientX, clientY) {
-                    if ((clientX > CANVAS_OFFSETX && clientX < (CANVAS_OFFSETX + CANVAS_WIDTH)) &&
-                        (clientY > CANVAS_OFFSETY && clientY < (CANVAS_OFFSETY + CANVAS_HEIGHT))) {
-                        return true;
-                    }
-                }
+                // render scene
+                function render() {
+                    var intersects,
+                        idleTime = Date.now() - idleSince;
 
-                function resetIntersected() {
-                    // if (( selectedEye ) && (INTERSECTED == selectedEye)) {
-                    //     INTERSECTED = null;
-                    //     // info.innerHTML = '';
-                    // } else {
-                    //     if ( INTERSECTED ) { INTERSECTED.material.color.setHex( 0x00ff00 ); }
-                    //     INTERSECTED = null;
-                    //     // info.innerHTML = '';
-                    // }
+                    if (idleTime > IDLE_AFTER_MS) {
+                        if (idling === false ) {
+                            toggleIdleState();
+                        }
+
+                        group.rotation.y += 0.01;
+
+                    } else {
+                        //horizontal rotation
+                        group.rotation.y += ( targetRotationX - group.rotation.y ) * 0.1;
+                    }
+
+                    // find intersections
+                    raycaster.setFromCamera(mouse, camera);
+
+                    // checks intersects for children of children
+                    intersects = raycaster.intersectObjects(scene.children, true);
+
+
+                    if (intersects.length > 0) {
+
+                        if (INTERSECTED != intersects[0].object) {
+                            resetIntersected();
+                            // find eyes
+                            if (intersects[ 0 ].object.name.indexOf('eye') > -1 ) {
+                                //change color
+                                INTERSECTED = intersects[ 0 ].object;
+
+                                if (touchIsDown && !idling) {
+                                    videoPlay();
+                                } else {
+                                    INTERSECTED.material.color.setHex( 0x006ebf );
+                                }
+
+                            }
+                        }
+
+                    } else {
+
+                         resetIntersected();
+                    }
+
+                    renderer.render(scene, camera);
+
                 }
 
                 function videoPlay() {
@@ -184,27 +201,73 @@
                     }
 
                     color = idling ? IDLE_COLOR : ACTIVE_COLOR;
-                                     
-                    setEyeColor(color);    
+
+                    setEyeColor(color);
+                }
+
+                function viewFeed(selected) {
+                    // console.log(selected.bodyposition);
+                }
+
+                /*************************************************/
+                /* Helper Methods
+                /*************************************************/
+
+                function setCanvasSize() {
+                    CANVAS_WIDTH = elem.width();
+                    CANVAS_HEIGHT = elem.height();
+
+                    // normalize mouse
+                    CANVAS_OFFSETX = elem.offset().left - (window.scrollX || 0);
+                    CANVAS_OFFSETY = elem.offset().top - (window.scrollY || 0);
+
+                    windowHalfX = CANVAS_WIDTH / 2;
+                }
+
+                // normalize mouse position for intersection
+                function setMousePosition(clientX, clientY) {
+                    var normalizedX,
+                        normalizedY;
+
+                    if (isOnCanvas(clientX, clientY)) {
+                        normalizedX = clientX - CANVAS_OFFSETX;
+                        normalizedY = clientY - CANVAS_OFFSETY;
+                        mouse.x = (normalizedX / CANVAS_WIDTH) * 2 - 1;
+                        mouse.y = -(normalizedY / CANVAS_HEIGHT) * 2 + 1;
+                    }
                 }
 
                 function setEyeColor(color) {
                     var i,
                         child;
 
-                    for (i = 0; i < eyeGroup.children.length; i++){
+                    for (i = 0; i < eyeGroup.children.length; i++) {
 
                         child = eyeGroup.children[i];
 
                         if (child.children[0].playing === false ) {
                             child.children[0].material.color.setHex( color );
                         }
-
                     }
                 }
 
-                function viewFeed(selected) {
-                    //console.log(selected.bodyposition);
+                // detect if on canvas
+                function isOnCanvas(clientX, clientY) {
+                    if ((clientX > CANVAS_OFFSETX && clientX < (CANVAS_OFFSETX + CANVAS_WIDTH)) &&
+                        (clientY > CANVAS_OFFSETY && clientY < (CANVAS_OFFSETY + CANVAS_HEIGHT))) {
+                        return true;
+                    }
+                }
+
+                function resetIntersected() {
+                    // if (( selectedEye ) && (INTERSECTED == selectedEye)) {
+                    //     INTERSECTED = null;
+                    //     // info.innerHTML = '';
+                    // } else {
+                    //     if ( INTERSECTED ) { INTERSECTED.material.color.setHex( 0x00ff00 ); }
+                    //     INTERSECTED = null;
+                    //     // info.innerHTML = '';
+                    // }
                 }
 
                 function loadData(group, scene) {
@@ -269,94 +332,17 @@
                     }
                 }
 
-                // render scene
-                function render() {
-                    var intersects,
-                        idleTime = Date.now() - idleSince;
-
-                    if (idleTime > IDLE_AFTER_MS) {
-                        if (idling === false ) {
-                            toggleIdleState();
-                        }
-
-                        group.rotation.y += 0.01;
-
-                    } else {
-                        //horizontal rotation
-                        group.rotation.y += ( targetRotationX - group.rotation.y ) * 0.1;
-                    }
-
-                    // find intersections
-                    raycaster.setFromCamera(mouse, camera);
-
-                    // checks intersects for children of children
-                    intersects = raycaster.intersectObjects(scene.children, true);
-
-
-                    if (intersects.length > 0) {
-
-                        if (INTERSECTED != intersects[0].object) {
-                            resetIntersected();
-                            // find eyes
-                            if (intersects[ 0 ].object.name.indexOf('eye') > -1 ) {
-                                //change color
-                                INTERSECTED = intersects[ 0 ].object;
-
-                                if (touchIsDown && !idling) {
-                                    videoPlay();
-                                } else {
-                                    INTERSECTED.material.color.setHex( 0x006ebf );
-                                }
-
-                            }
-                        }
-
-                    } else {
-
-                         resetIntersected();
-                    }
-
-                    renderer.render(scene, camera);
-
-                }
-
-                function animate() {
-
-                    
-                    requestAnimationFrame(animate);    
-                    
-                    
-                    render();
-                }
-
                 /*************************************************/
                 /* Event Handlers
                 /*************************************************/
 
                 function onWindowResize() {
-
-                    CANVAS_WIDTH = elem.width();
-                    CANVAS_HEIGHT = elem.height();
-
-                    // normalize mouse
-                    CANVAS_OFFSETX = elem.offset().left;
-                    CANVAS_OFFSETY = elem.offset().top;
-
-                    if (window.scrollX) {
-                        CANVAS_OFFSETX -= window.scrollX;
-                    }
-
-                    if (window.scrollY) {
-                        CANVAS_OFFSETY -= window.scrollY;
-                    }
-
-                    windowHalfX = CANVAS_WIDTH / 2;
+                    setCanvasSize();
 
                     camera.aspect = CANVAS_WIDTH / CANVAS_HEIGHT;
                     camera.updateProjectionMatrix();
 
                     renderer.setSize(CANVAS_WIDTH, CANVAS_HEIGHT);
-
                 }
 
                 function onDocumentMouseDown(event) {
@@ -364,7 +350,7 @@
 
                     document.addEventListener('mousemove', onDocumentMouseMove, false);
                     document.addEventListener('mouseup', onDocumentMouseUp, false);
-                    document.addEventListener('mouseout', onDocumentMouseOut, false);
+                    document.addEventListener('mouseout', onDocumentMouseUp, false);
 
                     //model rotation
                     mouseIsDown = true;
@@ -375,70 +361,54 @@
 
                     idleSince = Date.now();
 
-                    if (idling) { 
+                    if (idling) {
                         toggleIdleState();
                         group.rotation.y = 0;
                     }
                 }
 
                 function onDocumentMouseMove(event) {
-
                     // intersection
                     setMousePosition(event.clientX, event.clientY);
 
                     // model rotation
-                    if (isOnCanvas(event.clientX, event.clientY) && mouseIsDown === true) {
+                    if (mouseIsDown === true && isOnCanvas(event.clientX, event.clientY)) {
                         mouseX = event.clientX - windowHalfX;
                         targetRotationX = targetRotationOnMouseDownX + (mouseX - mouseXOnMouseDown) * 0.02;
                     }
-
                 }
 
                 function onDocumentMouseUp(event) {
-
                     document.removeEventListener('mouseup', onDocumentMouseUp, false);
-                    document.removeEventListener('mouseout', onDocumentMouseOut, false);
+                    document.removeEventListener('mouseout', onDocumentMouseUp, false);
 
                     // model rotation
                     mouseIsDown = false;
-
-                }
-
-                function onDocumentMouseOut(event) {
-
-                    document.removeEventListener('mouseup', onDocumentMouseUp, false);
-                    document.removeEventListener('mouseout', onDocumentMouseOut, false);
-
-                    // model rotation
-                    mouseIsDown = false;
-
                 }
 
                 function onDocumentTouchStart(event) {
-                    var touch;
+                    var touch = event.touches[0];
 
                     touchIsDown = true;
 
                     idleSince = Date.now();
 
                     // intersection
-                    if (event.touches.length == 1) {
-                        touch = event.touches[0];
+                    if (touch) {
                         setMousePosition(touch.clientX, touch.clientY);
                     }
 
                     if (INTERSECTED) { videoPlay(); }
 
                     //model rotation
-                    if (isOnCanvas(touch.clientX, touch.clientY) && event.touches.length == 1) {
-
+                    if (touch && isOnCanvas(touch.clientX, touch.clientY)) {
                         event.preventDefault();
 
                         mouseXOnMouseDown = event.touches[0].pageX - windowHalfX;
                         targetRotationOnMouseDownX = targetRotationX;
                     }
 
-                    if (idling) { 
+                    if (idling) {
                         toggleIdleState();
                         group.rotation.y = 0;
                     }
@@ -446,11 +416,13 @@
                 }
 
                 function onDocumentTouchMove(event) {
+                    var touch = event.touches[0];
+
                     //model rotation
-                    if (isOnCanvas(touch.clientX, touch.clientY) && event.touches.length == 1) {
+                    if (touch && isOnCanvas(touch.clientX, touch.clientY)) {
                         event.preventDefault();
 
-                        mouseX = event.touches[0].pageX - windowHalfX;
+                        mouseX = touch.pageX - windowHalfX;
                         targetRotationX = targetRotationOnMouseDownX + (mouseX - mouseXOnMouseDown) * 0.05;
                     }
                 }
