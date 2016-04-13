@@ -9,7 +9,9 @@
         return directive;
         function linker(scope, elem, attrs) {
             console.info("Initializing Body Suit: ", scope);
-            var scene = new THREE.Scene(), group = new THREE.Object3D(), eyeGroup = new THREE.Object3D(), mouse = new THREE.Vector2(), renderer = new THREE.WebGLRenderer(), raycaster = new THREE.Raycaster(), camera, INTERSECTED, CANVAS_WIDTH, CANVAS_HEIGHT, CANVAS_OFFSETX, CANVAS_OFFSETY, targetRotationX = 0, targetRotationOnMouseDownX = 0, mouseX = 0, mouseXOnMouseDown = 0, mouseIsDown = false, touchIsDown = false, windowHalfX, selectedEye, idleSince = Date.now(), idling = false, IDLE_AFTER_MS = 1e3 * 2;
+            var scene = new THREE.Scene(), group = new THREE.Object3D(), eyeGroup = new THREE.Object3D(), mouse = new THREE.Vector2(), renderer = new THREE.WebGLRenderer({
+                antialias: true
+            }), raycaster = new THREE.Raycaster(), camera, INTERSECTED, CANVAS_WIDTH, CANVAS_HEIGHT, CANVAS_OFFSETX, CANVAS_OFFSETY, targetRotationX = 0, targetRotationOnMouseDownX = 0, mouseX = 0, mouseXOnMouseDown = 0, mouseIsDown = false, touchIsDown = false, windowHalfX, selectedEye, idleSince = Date.now(), idling = false, IDLE_AFTER_MS = 1e3 * 10;
             IDLE_COLOR = 3368703, ACTIVE_COLOR = 10073087, PLAYING_COLOR = 5111718;
             $timeout(init);
             document.addEventListener("mousemove", onDocumentMouseMove, false);
@@ -35,7 +37,7 @@
                 CANVAS_OFFSETX = elem.offset().left;
                 CANVAS_OFFSETY = elem.offset().top;
                 windowHalfX = CANVAS_WIDTH / 2;
-                camera = new THREE.PerspectiveCamera(60, CANVAS_WIDTH / CANVAS_HEIGHT, 1, 1e3);
+                camera = new THREE.PerspectiveCamera(60, CANVAS_WIDTH / CANVAS_HEIGHT, 1, 200);
                 camera.position.y = 0;
                 camera.position.z = 35;
                 camera.lookAt(scene.position);
@@ -102,7 +104,7 @@
                             child.material = new THREE.MeshBasicMaterial({
                                 color: 15592680,
                                 wireframe: true,
-                                wireframeLinewidth: .5
+                                wireframeLinewidth: 1
                             });
                         }
                     });
@@ -114,9 +116,7 @@
                             child.material = new THREE.MeshBasicMaterial({
                                 color: 2236962
                             });
-                            child.scale.x = .99;
-                            child.scale.y = .99;
-                            child.scale.z = .99;
+                            child.scale.set(.99, .99, .99);
                         }
                     });
                     group.add(object);
@@ -148,6 +148,7 @@
                     idling = true;
                     changeState();
                     group.rotation.y += .01;
+                    targetRotationX = 0;
                     mouse.x = 1;
                     mouse.y = 1;
                 } else {
@@ -207,6 +208,7 @@
                 }
                 idleSince = Date.now();
                 if (idling) {
+                    console.log(group.rotation.y);
                     group.rotation.y = 0;
                     changeState();
                 }

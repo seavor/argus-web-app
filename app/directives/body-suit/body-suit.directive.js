@@ -19,7 +19,7 @@
                     group = new THREE.Object3D(),
                     eyeGroup = new THREE.Object3D(),
                     mouse = new THREE.Vector2(),
-                    renderer = new THREE.WebGLRenderer(),
+                    renderer = new THREE.WebGLRenderer( { antialias: true } ),
                     raycaster = new THREE.Raycaster(),
 
                     camera,
@@ -47,7 +47,7 @@
                     selectedEye,
                     idleSince = Date.now(),
                     idling = false,
-                    IDLE_AFTER_MS = 1000 * 2;
+                    IDLE_AFTER_MS = 1000 * 10;
 
                     IDLE_COLOR = 0x3366ff,
                     ACTIVE_COLOR = 0x99b3ff,
@@ -104,7 +104,7 @@
                     windowHalfX = CANVAS_WIDTH / 2;
 
                     // scene, raycaster, camera, renderer
-                    camera = new THREE.PerspectiveCamera(60, CANVAS_WIDTH / CANVAS_HEIGHT, 1, 1000);
+                    camera = new THREE.PerspectiveCamera(60, CANVAS_WIDTH / CANVAS_HEIGHT, 1, 200);
 
                     camera.position.y = 0;
                     camera.position.z = 35;
@@ -225,7 +225,7 @@
                     loader.load('obj/argus.obj', function(object) {
                         object.traverse(function(child) {
                             if (child instanceof THREE.Mesh) {
-                                child.material = new THREE.MeshBasicMaterial({ color: 0xedece8, wireframe: true, wireframeLinewidth: 0.5 });
+                                child.material = new THREE.MeshBasicMaterial({ color: 0xedece8, wireframe: true, wireframeLinewidth: 1 });
                             }
                         });
 
@@ -237,9 +237,7 @@
                         object.traverse(function(child) {
                             if (child instanceof THREE.Mesh) {
                                 child.material = new THREE.MeshBasicMaterial({ color: 0x222222 });
-                                child.scale.x = 0.99;
-                                child.scale.y = 0.99;
-                                child.scale.z = 0.99;
+                                child.scale.set( 0.99, 0.99, 0.99 );
                             }
                         });
 
@@ -283,6 +281,7 @@
                         idling = true;
                         changeState();
                         group.rotation.y += 0.01;
+                        targetRotationX = 0;
                         mouse.x = 1;
                         mouse.y = 1;
                     } else {
@@ -329,7 +328,11 @@
                 }
 
                 function animate() {
-                    requestAnimationFrame(animate);
+
+                    
+                    requestAnimationFrame(animate);    
+                    
+                    
                     render();
                 }
 
@@ -380,7 +383,8 @@
                     idleSince = Date.now();
 
                     if (idling) { 
-                        group.rotation.y = 0; 
+                        console.log(group.rotation.y);
+                        group.rotation.y = 0;
                         changeState();    
 
                     }
