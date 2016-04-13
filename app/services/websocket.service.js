@@ -7,7 +7,7 @@
                     selectFeed: selectFeed
                 },
 
-                socket = io.connect(),
+                socket = io.connect(window.location.origin + ':8080'),
                 pis = [],
 
                 mainFeed;

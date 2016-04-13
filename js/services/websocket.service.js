@@ -3,7 +3,7 @@
         console.info("Initialize Websocket Connection");
         var factory = {
             selectFeed: selectFeed
-        }, socket = io.connect(), pis = [], mainFeed;
+        }, socket = io.connect(window.location.origin + ":8080"), pis = [], mainFeed;
         socket.on("connect", function() {
             console.info("Websocket Connection Established");
             socket.emit("who", window.location.origin);

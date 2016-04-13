@@ -8,7 +8,7 @@ Include the following snippet in your VirtualHost configuration file:
 ```
 <VirtualHost *:80>
     DocumentRoot "/path/to/project/argus-web-client"
-    ServerName argus.dev
+    ServerName theargusproject.org
     <Directory "/path/to/project/argus-web-client">
         Options +FollowSymLinks
         Header set Access-Control-Allow-Origin "*"

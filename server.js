@@ -85,7 +85,6 @@ io.sockets.on('connection',
       }
     });
 
-
     // Socket disconnected
     socket.on('disconnect', function() {
       var webindexToRemove = web.indexOf(socket);
