@@ -162,7 +162,6 @@
                         INTERSECTED.material.color.setHex(PLAYING_COLOR);
                         INTERSECTED.playing = true;
                         selectedEye = INTERSECTED;
-                        //console.log(selectedEye.playing);
                     }
 
                     if (( selectedEye ) && (INTERSECTED != selectedEye)) {
@@ -171,36 +170,39 @@
                         INTERSECTED.material.color.setHex(PLAYING_COLOR);
                         INTERSECTED.playing = true;
                         selectedEye = INTERSECTED;
-                        //console.log(selectedEye.playing);
-                        // togglePlayStatus(selectedEye, INTERSECTED);
                     }
+
                     viewFeed(selectedEye);
                 }
 
-                function changeState() {
-                    var eyes = suitSrvc.getEyes(),
-                        length = eyes.length,
-                        i,
-                        color;
+                function toggleIdleState() {
+                    var color;
 
-                    if (idling === true) {
-                            color = IDLE_COLOR;
-                            //console.log('active');
+
+                    // toggle idle state
+                    idling = !idling;
+
+                    if (idling) {
+                        targetRotationX = 0;
+                        mouse.x = 1;
+                        mouse.y = 1;
                     }
 
-                    if (idling === false) {
-                            color = ACTIVE_COLOR;
-                            //console.log('active');
-                    }
-                                       
+                    color = idling ? IDLE_COLOR : ACTIVE_COLOR;
+                                     
+                    setEyeColor(color);    
+                }
+
+                function setEyeColor(color) {
+                    var i,
+                        child;
+
                     for (i = 0; i < eyeGroup.children.length; i++){
 
-                        var child = eyeGroup.children[i];
+                        child = eyeGroup.children[i];
 
                         if (child.children[0].playing === false ) {
-                                                  
                             child.children[0].material.color.setHex( color );
-                        
                         }
                
                     }
@@ -278,16 +280,14 @@
                         idleTime = Date.now() - idleSince;
 
                     if (idleTime > IDLE_AFTER_MS) {
-                        idling = true;
-                        changeState();
+                        if (idling === false ) {
+                            toggleIdleState();
+                        }
+
                         group.rotation.y += 0.01;
-                        targetRotationX = 0;
-                        mouse.x = 1;
-                        mouse.y = 1;
+
                     } else {
                         //horizontal rotation
-                        idling = false;
-                        changeState();
                         group.rotation.y += ( targetRotationX - group.rotation.y ) * 0.1;
                     }
 
@@ -299,8 +299,6 @@
 
 
                     if (intersects.length > 0) {
-
-
 
                         if (INTERSECTED != intersects[0].object) {
                             resetIntersected();
@@ -383,9 +381,8 @@
                     idleSince = Date.now();
 
                     if (idling) { 
-                        console.log(group.rotation.y);
+                        toggleIdleState();
                         group.rotation.y = 0;
-                        changeState();    
 
                     }
                 }
@@ -430,8 +427,6 @@
 
                     idleSince = Date.now();
 
-                    if (idling) { group.rotation.y = 0; }
-
                     // intersection
                     if (event.touches.length == 1) {
                         touch = event.touches[0];
@@ -448,6 +443,12 @@
                         mouseXOnMouseDown = event.touches[0].pageX - windowHalfX;
                         targetRotationOnMouseDownX = targetRotationX;
                     }
+
+                    if (idling) { 
+                        toggleIdleState();
+                        group.rotation.y = 0;
+                    }
+
                 }
 
                 function onDocumentTouchMove(event) {
