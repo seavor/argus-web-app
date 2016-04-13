@@ -6,8 +6,9 @@ var httpServer = http.createServer(requestHandler);
 httpServer.listen(8080);
 
 function requestHandler(req, res) {
-  console.log("The Request is: " + parsedUrl.pathname);
   var parsedUrl = url.parse(req.url);
+
+  console.log("The Request is: " + parsedUrl.pathname);
 
   // Read in the file they requested
   fs.readFile(__dirname + parsedUrl.pathname,
