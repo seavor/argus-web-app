@@ -9,7 +9,9 @@
         return directive;
         function linker(scope, elem, attrs) {
             console.info("Initializing Body Suit: ", scope);
-            var scene = new THREE.Scene(), group = new THREE.Object3D(), eyeGroup = new THREE.Object3D(), mouse = new THREE.Vector2(), renderer = new THREE.WebGLRenderer(), raycaster = new THREE.Raycaster(), camera, INTERSECTED, CANVAS_WIDTH, CANVAS_HEIGHT, CANVAS_OFFSETX, CANVAS_OFFSETY, targetRotationX = 0, targetRotationOnMouseDownX = 0, mouseX = 0, mouseXOnMouseDown = 0, mouseIsDown = false, touchIsDown = false, windowHalfX, selectedEye, idleSince = Date.now(), idling = false, IDLE_AFTER_MS = 1e3 * 2;
+            var scene = new THREE.Scene(), group = new THREE.Object3D(), eyeGroup = new THREE.Object3D(), mouse = new THREE.Vector2(), renderer = new THREE.WebGLRenderer({
+                antialias: true
+            }), raycaster = new THREE.Raycaster(), camera, INTERSECTED, CANVAS_WIDTH, CANVAS_HEIGHT, CANVAS_OFFSETX, CANVAS_OFFSETY, targetRotationX = 0, targetRotationOnMouseDownX = 0, mouseX = 0, mouseXOnMouseDown = 0, mouseIsDown = false, touchIsDown = false, windowHalfX, selectedEye, idleSince = Date.now(), idling = false, IDLE_AFTER_MS = 1e3 * 10;
             IDLE_COLOR = 3368703, ACTIVE_COLOR = 10073087, PLAYING_COLOR = 5111718;
             $timeout(init);
             document.addEventListener("mousemove", onDocumentMouseMove, false);
@@ -31,7 +33,7 @@
             });
             function init() {
                 setCanvasSize();
-                camera = new THREE.PerspectiveCamera(60, CANVAS_WIDTH / CANVAS_HEIGHT, 1, 1e3);
+                camera = new THREE.PerspectiveCamera(60, CANVAS_WIDTH / CANVAS_HEIGHT, 1, 200);
                 camera.position.y = 0;
                 camera.position.z = 35;
                 camera.lookAt(scene.position);
@@ -51,12 +53,11 @@
             function render() {
                 var intersects, idleTime = Date.now() - idleSince;
                 if (idleTime > IDLE_AFTER_MS) {
-                    idling = true;
-                    changeState();
+                    if (idling === false) {
+                        toggleIdleState();
+                    }
                     group.rotation.y += .01;
                 } else {
-                    idling = false;
-                    changeState();
                     group.rotation.y += (targetRotationX - group.rotation.y) * .1;
                 }
                 raycaster.setFromCamera(mouse, camera);
@@ -93,14 +94,16 @@
                 }
                 viewFeed(selectedEye);
             }
-            function changeState() {
-                var color = idling ? IDLE_COLOR : ACTIVE_COLOR, length = eyeGroup.children.length, i = 0, child;
-                for (i; i < length; i++) {
-                    child = eyeGroup.children[i];
-                    if (child.children[0].playing === false) {
-                        child.children[0].material.color.setHex(color);
-                    }
+            function toggleIdleState() {
+                var color;
+                idling = !idling;
+                if (idling) {
+                    targetRotationX = 0;
+                    mouse.x = 1;
+                    mouse.y = 1;
                 }
+                color = idling ? IDLE_COLOR : ACTIVE_COLOR;
+                setEyeColor(color);
             }
             function viewFeed(selected) {}
             function setCanvasSize() {
@@ -119,6 +122,15 @@
                     mouse.y = -(normalizedY / CANVAS_HEIGHT) * 2 + 1;
                 }
             }
+            function setEyeColor(color) {
+                var i, child;
+                for (i = 0; i < eyeGroup.children.length; i++) {
+                    child = eyeGroup.children[i];
+                    if (child.children[0].playing === false) {
+                        child.children[0].material.color.setHex(color);
+                    }
+                }
+            }
             function isOnCanvas(clientX, clientY) {
                 if (clientX > CANVAS_OFFSETX && clientX < CANVAS_OFFSETX + CANVAS_WIDTH && (clientY > CANVAS_OFFSETY && clientY < CANVAS_OFFSETY + CANVAS_HEIGHT)) {
                     return true;
@@ -133,7 +145,7 @@
                             child.material = new THREE.MeshBasicMaterial({
                                 color: 15592680,
                                 wireframe: true,
-                                wireframeLinewidth: .5
+                                wireframeLinewidth: 1
                             });
                         }
                     });
@@ -145,9 +157,7 @@
                             child.material = new THREE.MeshBasicMaterial({
                                 color: 2236962
                             });
-                            child.scale.x = .99;
-                            child.scale.y = .99;
-                            child.scale.z = .99;
+                            child.scale.set(.99, .99, .99);
                         }
                     });
                     group.add(object);
@@ -192,8 +202,8 @@
                 }
                 idleSince = Date.now();
                 if (idling) {
+                    toggleIdleState();
                     group.rotation.y = 0;
-                    changeState();
                 }
             }
             function onDocumentMouseMove(event) {
@@ -212,9 +222,6 @@
                 var touch = event.touches[0];
                 touchIsDown = true;
                 idleSince = Date.now();
-                if (idling) {
-                    group.rotation.y = 0;
-                }
                 if (touch) {
                     setMousePosition(touch.clientX, touch.clientY);
                 }
@@ -225,6 +232,10 @@
                     event.preventDefault();
                     mouseXOnMouseDown = event.touches[0].pageX - windowHalfX;
                     targetRotationOnMouseDownX = targetRotationX;
+                }
+                if (idling) {
+                    toggleIdleState();
+                    group.rotation.y = 0;
                 }
             }
             function onDocumentTouchMove(event) {

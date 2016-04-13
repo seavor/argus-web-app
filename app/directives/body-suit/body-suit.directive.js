@@ -19,7 +19,7 @@
                     group = new THREE.Object3D(),
                     eyeGroup = new THREE.Object3D(),
                     mouse = new THREE.Vector2(),
-                    renderer = new THREE.WebGLRenderer(),
+                    renderer = new THREE.WebGLRenderer( { antialias: true } ),
                     raycaster = new THREE.Raycaster(),
 
                     camera,
@@ -47,7 +47,7 @@
                     selectedEye,
                     idleSince = Date.now(),
                     idling = false,
-                    IDLE_AFTER_MS = 1000 * 2;
+                    IDLE_AFTER_MS = 1000 * 10;
 
                     IDLE_COLOR = 0x3366ff,
                     ACTIVE_COLOR = 0x99b3ff,
@@ -93,7 +93,7 @@
                     setCanvasSize();
 
                     // scene, raycaster, camera, renderer
-                    camera = new THREE.PerspectiveCamera(60, CANVAS_WIDTH / CANVAS_HEIGHT, 1, 1000);
+                    camera = new THREE.PerspectiveCamera(60, CANVAS_WIDTH / CANVAS_HEIGHT, 1, 200);
 
                     camera.position.y = 0;
                     camera.position.z = 35;
@@ -125,13 +125,14 @@
                         idleTime = Date.now() - idleSince;
 
                     if (idleTime > IDLE_AFTER_MS) {
-                        idling = true;
-                        changeState();
+                        if (idling === false ) {
+                            toggleIdleState();
+                        }
+
                         group.rotation.y += 0.01;
+
                     } else {
                         //horizontal rotation
-                        idling = false;
-                        changeState();
                         group.rotation.y += ( targetRotationX - group.rotation.y ) * 0.1;
                     }
 
@@ -141,7 +142,9 @@
                     // checks intersects for children of children
                     intersects = raycaster.intersectObjects(scene.children, true);
 
+
                     if (intersects.length > 0) {
+
                         if (INTERSECTED != intersects[0].object) {
                             resetIntersected();
                             // find eyes
@@ -154,13 +157,17 @@
                                 } else {
                                     INTERSECTED.material.color.setHex( 0x006ebf );
                                 }
+
                             }
                         }
+
                     } else {
+
                          resetIntersected();
                     }
 
                     renderer.render(scene, camera);
+
                 }
 
                 function videoPlay() {
@@ -168,7 +175,6 @@
                         INTERSECTED.material.color.setHex(PLAYING_COLOR);
                         INTERSECTED.playing = true;
                         selectedEye = INTERSECTED;
-                        //console.log(selectedEye.playing);
                     }
 
                     if (( selectedEye ) && (INTERSECTED != selectedEye)) {
@@ -177,26 +183,26 @@
                         INTERSECTED.material.color.setHex(PLAYING_COLOR);
                         INTERSECTED.playing = true;
                         selectedEye = INTERSECTED;
-                        //console.log(selectedEye.playing);
-                        // togglePlayStatus(selectedEye, INTERSECTED);
                     }
+
                     viewFeed(selectedEye);
                 }
 
-                function changeState() {
-                    var color = idling ? IDLE_COLOR : ACTIVE_COLOR,
-                        length = eyeGroup.children.length,
-                        i = 0,
+                function toggleIdleState() {
+                    var color;
 
-                        child;
+                    // toggle idle state
+                    idling = !idling;
 
-                    for (i; i < length; i++){
-                        child = eyeGroup.children[i];
-
-                        if (child.children[0].playing === false ) {
-                            child.children[0].material.color.setHex( color );
-                        }
+                    if (idling) {
+                        targetRotationX = 0;
+                        mouse.x = 1;
+                        mouse.y = 1;
                     }
+
+                    color = idling ? IDLE_COLOR : ACTIVE_COLOR;
+
+                    setEyeColor(color);
                 }
 
                 function viewFeed(selected) {
@@ -228,6 +234,20 @@
                         normalizedY = clientY - CANVAS_OFFSETY;
                         mouse.x = (normalizedX / CANVAS_WIDTH) * 2 - 1;
                         mouse.y = -(normalizedY / CANVAS_HEIGHT) * 2 + 1;
+                    }
+                }
+
+                function setEyeColor(color) {
+                    var i,
+                        child;
+
+                    for (i = 0; i < eyeGroup.children.length; i++) {
+
+                        child = eyeGroup.children[i];
+
+                        if (child.children[0].playing === false ) {
+                            child.children[0].material.color.setHex( color );
+                        }
                     }
                 }
 
@@ -265,7 +285,7 @@
                     loader.load('obj/argus.obj', function(object) {
                         object.traverse(function(child) {
                             if (child instanceof THREE.Mesh) {
-                                child.material = new THREE.MeshBasicMaterial({ color: 0xedece8, wireframe: true, wireframeLinewidth: 0.5 });
+                                child.material = new THREE.MeshBasicMaterial({ color: 0xedece8, wireframe: true, wireframeLinewidth: 1 });
                             }
                         });
 
@@ -277,9 +297,7 @@
                         object.traverse(function(child) {
                             if (child instanceof THREE.Mesh) {
                                 child.material = new THREE.MeshBasicMaterial({ color: 0x222222 });
-                                child.scale.x = 0.99;
-                                child.scale.y = 0.99;
-                                child.scale.z = 0.99;
+                                child.scale.set( 0.99, 0.99, 0.99 );
                             }
                         });
 
@@ -344,8 +362,8 @@
                     idleSince = Date.now();
 
                     if (idling) {
+                        toggleIdleState();
                         group.rotation.y = 0;
-                        changeState();
                     }
                 }
 
@@ -375,8 +393,6 @@
 
                     idleSince = Date.now();
 
-                    if (idling) { group.rotation.y = 0; }
-
                     // intersection
                     if (touch) {
                         setMousePosition(touch.clientX, touch.clientY);
@@ -391,6 +407,12 @@
                         mouseXOnMouseDown = event.touches[0].pageX - windowHalfX;
                         targetRotationOnMouseDownX = targetRotationX;
                     }
+
+                    if (idling) {
+                        toggleIdleState();
+                        group.rotation.y = 0;
+                    }
+
                 }
 
                 function onDocumentTouchMove(event) {
