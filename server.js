@@ -50,16 +50,15 @@ io.sockets.on('connection',
     // Put in the appropriate array
     socket.on('who', function(data) {
       if (data == "pi") {
-        console.log("New PI: ", data);
+        console.log("New PI: ", data.id);
 
         pis.push(socket);
         socket.mainFeed = mainFeed || socket.id;
       } else {
-        console.log("New Web Client: ", data);
+        console.log("New Web Client");
         web.push(socket);
+        sendImages(socket);
       }
-
-      sendImages(socket);
     });
 
     // Web client wants specific high quality stream
@@ -70,7 +69,7 @@ io.sockets.on('connection',
 
     // New image from a pi, send it out to all highqaulity subscribers
     socket.on("image", function(data) {
-      console.log("New Image Received: ", data);
+      console.log("New Image Received");
       socket.lastimage = data;
 
       for (var i = 0; web.length > i; i++) {
@@ -101,13 +100,15 @@ io.sockets.on('connection',
 );
 
 // Send out the images every 2 seconds
-var lowQualityInterval = setInterval(function() {
-  console.log("Sending low");
+setInterval(lowQualityInterval, 2000);
+
+function lowQualityInterval() {
+  console.log("Sending Low-Res Images");
   // Loop thru connected clients
   for (var i = 0; web.length > i; i++) {
     sendImages(web[i]);
   }
-}, 2000);
+}
 
 function sendImages(socket) {
   var images = [];

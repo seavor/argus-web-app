@@ -29,7 +29,7 @@
                 ]
              */
             socket.on('pis', function(data) {
-                console.log('PI Feeds: ', data);
+                console.log('PI Feeds');
                 pis = data;
                 $rootScope.$broadcast('socket:pis', data);
             });
@@ -42,7 +42,7 @@
                 }
              */
             socket.on('image', function(data) {
-                console.log('Main Feed: ', data);
+                console.log('Main Feed');
                 mainFeed = data.pi_id;
                 $rootScope.$broadcast('socket:mainFeed', data);
             });
