@@ -10,7 +10,7 @@
             socket.emit("who", "web");
         });
         socket.on("pis", function(data) {
-            console.log("PI Feeds");
+            console.log("PI Feeds: ", data);
             pis = data;
             $rootScope.$broadcast("socket:pis", data);
         });
