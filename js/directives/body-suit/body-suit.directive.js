@@ -11,8 +11,7 @@
             console.info("Initializing Body Suit: ", scope);
             var scene = new THREE.Scene(), group = new THREE.Object3D(), eyeGroup = new THREE.Object3D(), mouse = new THREE.Vector2(), renderer = new THREE.WebGLRenderer({
                 antialias: true
-            }), raycaster = new THREE.Raycaster(), camera, INTERSECTED, CANVAS_WIDTH, CANVAS_HEIGHT, CANVAS_OFFSETX, CANVAS_OFFSETY, targetRotationX = 0, targetRotationOnMouseDownX = 0, mouseX = 0, mouseXOnMouseDown = 0, mouseIsDown = false, touchIsDown = false, windowHalfX, selectedEye, idleSince = Date.now(), idling = false, IDLE_AFTER_MS = 1e3 * 10;
-            IDLE_COLOR = 3368703, ACTIVE_COLOR = 10073087, PLAYING_COLOR = 5111718;
+            }), raycaster = new THREE.Raycaster(), camera, tween, intersected, CANVAS_WIDTH, CANVAS_HEIGHT, CANVAS_OFFSETX, CANVAS_OFFSETY, targetRotationX = 0, targetRotationOnMouseDownX = 0, mouseX = 0, mouseXOnMouseDown = 0, mouseIsDown = false, touchIsDown = false, windowHalfX, selectedEye, idleSince = Date.now(), idling = false, IDLE_AFTER_MS = 1e3 * 10, switchedTime = Date.now(), IDLE_COLOR = 1651583, ACTIVE_COLOR = 3368703, PLAYING_COLOR = 1465406, PLAYING_COLOR_BLINK = 5999735, ROLLOVER_COLOR = 1651583;
             $timeout(init);
             document.addEventListener("mousemove", onDocumentMouseMove, false);
             document.addEventListener("mousedown", onDocumentMouseDown, false);
@@ -33,9 +32,11 @@
             });
             function init() {
                 setCanvasSize();
+                var light = new THREE.HemisphereLight(16777147, 526368, 5);
+                scene.add(light);
                 camera = new THREE.PerspectiveCamera(60, CANVAS_WIDTH / CANVAS_HEIGHT, 1, 200);
                 camera.position.y = 0;
-                camera.position.z = 40;
+                camera.position.z = 35;
                 camera.lookAt(scene.position);
                 mouse.x = 1;
                 mouse.y = 1;
@@ -46,11 +47,11 @@
                 loadData(group, scene);
                 animate();
             }
-            function animate() {
+            function animate(time) {
                 requestAnimationFrame(animate);
-                render();
+                render(time);
             }
-            function render() {
+            function render(time) {
                 var intersects, idleTime = Date.now() - idleSince;
                 if (idleTime > IDLE_AFTER_MS) {
                     if (idling === false) {
@@ -60,17 +61,21 @@
                 } else {
                     group.rotation.y += (targetRotationX - group.rotation.y) * .1;
                 }
+                if (selectedEye) {
+                    blinkEye();
+                }
                 raycaster.setFromCamera(mouse, camera);
                 intersects = raycaster.intersectObjects(scene.children, true);
+                if (tween) tween.update(time);
                 if (intersects.length > 0) {
-                    if (INTERSECTED != intersects[0].object) {
+                    if (intersected != intersects[0].object) {
                         resetIntersected();
                         if (intersects[0].object.name.indexOf("eye") > -1) {
-                            INTERSECTED = intersects[0].object;
+                            intersected = intersects[0].object;
                             if (touchIsDown && !idling) {
                                 videoPlay();
                             } else {
-                                INTERSECTED.material.color.setHex(28351);
+                                intersected.material.color.setHex(ROLLOVER_COLOR);
                             }
                         }
                     }
@@ -81,16 +86,16 @@
             }
             function videoPlay() {
                 if (!selectedEye) {
-                    INTERSECTED.material.color.setHex(PLAYING_COLOR);
-                    INTERSECTED.playing = true;
-                    selectedEye = INTERSECTED;
+                    intersected.material.color.setHex(PLAYING_COLOR);
+                    intersected.playing = true;
+                    selectedEye = intersected;
                 }
-                if (selectedEye && INTERSECTED != selectedEye) {
+                if (selectedEye && intersected != selectedEye) {
                     selectedEye.material.color.setHex(ACTIVE_COLOR);
                     selectedEye.playing = false;
-                    INTERSECTED.material.color.setHex(PLAYING_COLOR);
-                    INTERSECTED.playing = true;
-                    selectedEye = INTERSECTED;
+                    intersected.material.color.setHex(PLAYING_COLOR);
+                    intersected.playing = true;
+                    selectedEye = intersected;
                 }
                 viewFeed(selectedEye);
             }
@@ -104,6 +109,47 @@
                 }
                 color = idling ? IDLE_COLOR : ACTIVE_COLOR;
                 setEyeColor(color);
+            }
+            function setEyeColor(color) {
+                var i, child;
+                for (i = 0; i < eyeGroup.children.length; i++) {
+                    child = eyeGroup.children[i];
+                    if (child.children[0].playing === false) {
+                        child.children[0].material.color.setHex(color);
+                    }
+                }
+            }
+            function blinkEye() {
+                var timeNow, elapsedTime;
+                timeNow = Date.now();
+                elapsedTime = timeNow - switchedTime;
+                if (elapsedTime > 1200) {
+                    switchEyeColor();
+                    switchedTime = Date.now();
+                }
+            }
+            function switchEyeColor() {
+                var color = selectedEye.material.color, hexColor = color.getHex(), targetColor;
+                if (hexColor == PLAYING_COLOR) {
+                    console.log("tween", hexColor);
+                    console.log(PLAYING_COLOR);
+                    targetColor = PLAYING_COLOR_BLINK;
+                    tweenColor(color, targetColor);
+                } else {
+                    console.log("tweenagain", hexColor);
+                    console.log(PLAYING_COLOR_BLINK);
+                    targetColor = PLAYING_COLOR;
+                    tweenColor(color, targetColor);
+                }
+            }
+            function tweenColor(color, targetColor) {
+                var rgbTarget;
+                rgbTarget = new THREE.Color(targetColor);
+                tween = new TWEEN.Tween(color).to({
+                    r: rgbTarget.r,
+                    g: rgbTarget.g,
+                    b: rgbTarget.b
+                }, 950).easing(TWEEN.Easing.Quartic.In).start();
             }
             function viewFeed(selected) {}
             function setCanvasSize() {
@@ -122,21 +168,21 @@
                     mouse.y = -(normalizedY / CANVAS_HEIGHT) * 2 + 1;
                 }
             }
-            function setEyeColor(color) {
-                var i, child;
-                for (i = 0; i < eyeGroup.children.length; i++) {
-                    child = eyeGroup.children[i];
-                    if (child.children[0].playing === false) {
-                        child.children[0].material.color.setHex(color);
-                    }
-                }
-            }
             function isOnCanvas(clientX, clientY) {
                 if (clientX > CANVAS_OFFSETX && clientX < CANVAS_OFFSETX + CANVAS_WIDTH && (clientY > CANVAS_OFFSETY && clientY < CANVAS_OFFSETY + CANVAS_HEIGHT)) {
                     return true;
                 }
             }
-            function resetIntersected() {}
+            function resetIntersected() {
+                if (selectedEye && intersected == selectedEye) {
+                    intersected = null;
+                } else {
+                    if (intersected) {
+                        intersected.material.color.setHex(ACTIVE_COLOR);
+                    }
+                    intersected = null;
+                }
+            }
             function loadData(group, scene) {
                 var manager = new THREE.LoadingManager(), loader = new THREE.OBJLoader(manager), eyes = suitSrvc.getEyes(), length = eyes.length, i, currentEye, eyeLoader;
                 loader.load("obj/argus.obj", function(object) {
@@ -169,9 +215,12 @@
                         object.traverse(function(child) {
                             if (child instanceof THREE.Mesh) {
                                 var texture = new THREE.TextureLoader().load("obj/textures/eye.png");
-                                child.material = new THREE.MeshBasicMaterial({
-                                    color: 255,
-                                    map: texture
+                                child.material = new THREE.MeshPhongMaterial({
+                                    color: ACTIVE_COLOR,
+                                    emissive: 0,
+                                    emissiveIntensity: .9,
+                                    map: texture,
+                                    shininess: 50
                                 });
                                 child.bodyposition = this.bodyposition;
                                 child.playing = false;
@@ -197,7 +246,7 @@
                 mouseIsDown = true;
                 mouseXOnMouseDown = event.clientX - windowHalfX;
                 targetRotationOnMouseDownX = targetRotationX;
-                if (INTERSECTED) {
+                if (intersected) {
                     videoPlay();
                 }
                 idleSince = Date.now();
@@ -225,7 +274,7 @@
                 if (touch) {
                     setMousePosition(touch.clientX, touch.clientY);
                 }
-                if (INTERSECTED) {
+                if (intersected) {
                     videoPlay();
                 }
                 if (touch && isOnCanvas(touch.clientX, touch.clientY)) {

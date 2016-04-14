@@ -54,6 +54,7 @@ module.exports = function(grunt) {
       vendors: [
         'node_modules/jquery/dist/jquery.min.js',
         'node_modules/three/three.min.js',
+        'node_modules/tween.js/src/Tween.js',
         'vendors/OBJLoader.js',
         'vendors/ajpng.min.js',
         'node_modules/socket.io-client/socket.io.js',
