@@ -1,6 +1,7 @@
 (function() {
     angular.module("app").run([ "$rootScope", "$state", "config", "webSocket", function($rootScope, $state, config, webSocket) {
         console.info("Running Application");
+        var ws = webSocket;
         $rootScope.app = {
             title: config.site
         };
