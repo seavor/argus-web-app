@@ -26,15 +26,13 @@ io.sockets.on('connection', function (socket) {
 
   // Put in the appropriate array
   socket.on('who', function(data) {
-    if (data == "pi") {
-      console.log("New PI: ", data.id);
+    console.log("New Connection: ", data);
 
+    if (data == "pi") {
       pis.push(socket);
-      socket.mainFeed = mainFeed || socket.id;
     } else {
-      console.log("New Web Client");
+      // socket.mainFeed = pis.length ? pi[0].id || null; // @TODO
       web.push(socket);
-      sendImages(socket);
     }
   });
 
@@ -53,7 +51,6 @@ io.sockets.on('connection', function (socket) {
       if (web[i].mainFeed == socket.id) {
         web[i].emit("image", {
           "pi_id": socket.id,
-          "label": socket.label,
           "imagedata": data
         });
       }
@@ -91,8 +88,7 @@ function sendImages(socket) {
   for (var i = 0; pis.length > i; i++) {
     if (pis[i].lastimage && pis[i].id !== socket.mainFeed) {
       images.push({
-        "pi_id": pis[i].id,
-        "label": pis[i].label,
+        "id": pis[i].id,
         "imageData": pis[i].lastimage
       });
     }

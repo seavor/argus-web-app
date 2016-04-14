@@ -7,7 +7,7 @@
         console.log(socket);
         socket.on("connect", function() {
             console.info("Websocket Connection Established");
-            socket.emit("who", window.location.origin);
+            socket.emit("who", "web");
         });
         socket.on("pis", function(data) {
             console.log("PI Feeds");
@@ -16,7 +16,7 @@
         });
         socket.on("image", function(data) {
             console.log("Main Feed");
-            mainFeed = data.pi_id;
+            mainFeed = data.id;
             $rootScope.$broadcast("socket:mainFeed", data);
         });
         return factory;
