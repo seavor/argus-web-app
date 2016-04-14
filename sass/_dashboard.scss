@@ -60,7 +60,7 @@
   }
 
   .body-suit {
-    width: 25%;
+    width: 30%;
     padding-right: 2.5vw;
 
     &-directive {
@@ -92,7 +92,7 @@
 
   .video-feed {
     @extend .clearfix;
-    width: 75%;
+    width: 70%;
 
     &-label {
       position: absolute;
@@ -120,7 +120,7 @@
 
     &-thumbnails {
       clear: both;
-      height: 150px;
+      height: 200px;
     }
   }
 
