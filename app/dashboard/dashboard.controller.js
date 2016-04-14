@@ -43,7 +43,6 @@
              */
             stream.socket.on('cams', function(data) {
                 $timeout(function() {
-                    console.log('Cam Feeds Updated: ', data);
                     $scope.cams = data;
                 });
             });
@@ -56,7 +55,6 @@
              */
             stream.socket.on('mainFeed', function(data) {
                 $timeout(function() {
-                    console.log('Main Feed: ', data);
                     $scope.mainFeed = data;
                 });
             });
