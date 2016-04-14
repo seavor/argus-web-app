@@ -4,17 +4,18 @@
         var factory = {
             selectFeed: selectFeed
         }, socket = io.connect(window.location.origin + ":8080"), pis = [], mainFeed;
+        console.log(socket);
         socket.on("connect", function() {
             console.info("Websocket Connection Established");
             socket.emit("who", window.location.origin);
         });
         socket.on("pis", function(data) {
-            console.log("PI Feeds: ", data);
+            console.log("PI Feeds");
             pis = data;
             $rootScope.$broadcast("socket:pis", data);
         });
         socket.on("image", function(data) {
-            console.log("Main Feed: ", data);
+            console.log("Main Feed");
             mainFeed = data.pi_id;
             $rootScope.$broadcast("socket:mainFeed", data);
         });

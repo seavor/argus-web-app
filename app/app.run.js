@@ -1,5 +1,5 @@
 (function() {
-    angular.module('app').run(['$rootScope', '$state', 'config', function($rootScope, $state, config) {
+    angular.module('app').run(['$rootScope', '$state', 'config', 'webSocket', function($rootScope, $state, config, webSocket) {
         console.info('Running Application');
         $rootScope.app = {
             title: config.site

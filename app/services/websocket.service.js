@@ -12,6 +12,8 @@
 
                 mainFeed;
 
+            console.log(socket);
+
             /*********************************************/
 
             socket.on('connect', function() {
