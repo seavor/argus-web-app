@@ -11,7 +11,7 @@
             console.info("Initializing Body Suit: ", scope);
             var scene = new THREE.Scene(), group = new THREE.Object3D(), eyeGroup = new THREE.Object3D(), mouse = new THREE.Vector2(), renderer = new THREE.WebGLRenderer({
                 antialias: true
-            }), raycaster = new THREE.Raycaster(), camera, tween, intersected, CANVAS_WIDTH, CANVAS_HEIGHT, CANVAS_OFFSETX, CANVAS_OFFSETY, targetRotationX = 0, targetRotationOnMouseDownX = 0, mouseX = 0, mouseXOnMouseDown = 0, mouseIsDown = false, touchIsDown = false, windowHalfX, selectedEye, idleSince = Date.now(), idling = false, IDLE_AFTER_MS = 1e3 * 10, switchedTime = Date.now(), DEACTIVATED_COLOR = 11184810, IDLE_COLOR = 1651583, ACTIVE_COLOR = 3368703, PLAYING_COLOR = 1465406, PLAYING_COLOR_BLINK = 5999735, ROLLOVER_COLOR = 1651583;
+            }), raycaster = new THREE.Raycaster(), camera, tween, intersected, CANVAS_WIDTH, CANVAS_HEIGHT, CANVAS_OFFSETX, CANVAS_OFFSETY, targetRotationX = 0, targetRotationOnMouseDownX = 0, mouseX = 0, mouseXOnMouseDown = 0, mouseIsDown = false, touchIsDown = false, windowHalfX, selectedEye, idleSince = Date.now(), idling = false, IDLE_AFTER_MS = 1e3 * 8, switchedTime = Date.now(), DEACTIVATED_COLOR = 1651583, IDLE_COLOR = 1651583, ACTIVE_COLOR = 3368703, PLAYING_COLOR = 16711680, PLAYING_COLOR_BLINK = 16737894, ROLLOVER_COLOR = 1651583;
             $timeout(init);
             document.addEventListener("mousemove", onDocumentMouseMove, false);
             document.addEventListener("mousedown", onDocumentMouseDown, false);
@@ -36,7 +36,7 @@
                 scene.add(light);
                 camera = new THREE.PerspectiveCamera(60, CANVAS_WIDTH / CANVAS_HEIGHT, 1, 200);
                 camera.position.y = 0;
-                camera.position.z = 35;
+                camera.position.z = 40;
                 camera.lookAt(scene.position);
                 mouse.x = 1;
                 mouse.y = 1;
@@ -71,7 +71,7 @@
                     if (intersected != intersects[0].object) {
                         resetIntersected();
                         console.log(intersects);
-                        if (intersects[0].object.name.indexOf("21") > -1) {
+                        if (intersects[0].object.name.indexOf("eye") > -1 && intersects[0].object.active === true) {
                             console.log("got it");
                             intersected = intersects[0].object;
                             if (touchIsDown && !idling) {
@@ -225,7 +225,9 @@
                                     shininess: 50
                                 });
                                 child.bodyposition = this.bodyposition;
+                                child.active = this.active;
                                 child.playing = false;
+                                console.log(child.bodyposition, child.active);
                             }
                         }.bind(this));
                         eyeGroup.add(object);
