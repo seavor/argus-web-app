@@ -1,39 +1,44 @@
 (function() {
-    angular.module("app").controller("DashboardCtrl", [ "$scope", "$timeout", "$state", "apngSrvc", "localStorageService", function($scope, $timeout, $state, apngSrvc, localStorageService) {
+    angular.module("app").controller("DashboardCtrl", [ "$scope", "$timeout", "$state", "$sce", "stream", "apngSrvc", "localStorageService", "piSrvc", function($scope, $timeout, $state, $sce, stream, apngSrvc, localStorageService, piSrvc) {
         console.info("Initializing Dashboard Controller: ", $scope);
         if (!apngSrvc.assetsCached()) {
             $state.go("initializer");
             return;
         }
-        $scope.thumbnails = [ {
-            id: 1,
-            label: "head",
-            src: "cam-thumb.png"
-        }, {
-            id: 2,
-            label: "right arm",
-            src: "cam-thumb.png"
-        }, {
-            id: 3,
-            label: "left arm",
-            src: "cam-thumb.png"
-        }, {
-            id: 4,
-            label: "right leg",
-            src: "cam-thumb.png"
-        }, {
-            id: 5,
-            label: "left leg",
-            src: "cam-thumb.png"
-        } ];
-        $scope.selectedFeed = $scope.thumbnails[localStorageService.get("selectedIdx") || 0];
+        if (localStorageService.get("mainFeed")) {
+            viewFeed(localStorageService.get("mainFeed"));
+        }
+        $scope.cleanAsset = cleanAsset;
         $scope.viewFeed = viewFeed;
-        function viewFeed(idx) {
+        $scope.camLabels = {
+            1: "Cam Label",
+            2: "Cam Label",
+            3: "Cam Label",
+            4: "Cam Label",
+            5: "Cam Label",
+            6: "Cam Label",
+            7: "Cam Label"
+        };
+        $scope.cams = [];
+        piSrvc.launchPi();
+        stream.socket.on("cams", function(data) {
             $timeout(function() {
-                console.log("View Feed: ", idx);
-                localStorageService.set("selectedIdx", idx);
-                $scope.selectedFeed = $scope.thumbnails[idx];
+                console.log("Cam Feeds Updated: ", data);
+                $scope.cams = data;
             });
+        });
+        stream.socket.on("mainFeed", function(data) {
+            $timeout(function() {
+                console.log("Main Feed: ", data);
+                $scope.mainFeed = data;
+            });
+        });
+        function viewFeed(id) {
+            stream.socket.emit("selectFeed", id);
+            localStorageService.set("mainFeed", id);
+        }
+        function cleanAsset(asset) {
+            return $sce.trustAsResourceUrl(asset);
         }
     } ]);
 })();

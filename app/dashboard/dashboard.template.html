@@ -18,36 +18,46 @@
       <hud-animation class="body-suit-animation" src="'images/bottom-hud.png'"></hud-animation>
     </div>
     <div class="video-feed">
-      <hud-element class="video-feed-directive" border="'images/video-feed.png'" cover="true" content-position="'
-        width: 92%;
-        height: 92%;
-        top: 4%;
-        left: 4%;
-      '">
-        <video-feed src="'images/placeholder.png'"></video-feed>
-        <span class="video-feed-label">{{selectedFeed.label}}</span>
+      <hud-element
+        class="video-feed-directive"
+        border="'images/video-feed.png'"
+        cover="true"
+        label="mainFeed.id"
+        content-position="'
+          width: 92%;
+          height: 92%;
+          top: 4%;
+          left: 4%;
+        '"
+      >
+        <img ng-src="{{mainFeed.imageData}}">
       </hud-element>
-      <hud-element class="video-feed-thumbnails" border="'images/thumbnails.png'" content-position="'
-        width: 85%;
-        height: 50%;
-        top: 25%;
-        left: 1%;
-      '">
+      <hud-element
+        class="video-feed-thumbnails"
+        border="'images/thumbnails.png'"
+        content-position="'
+          width: 85%;
+          height: 50%;
+          top: 25%;
+          left: 1%;
+        '"
+      >
         <div class="thumbnails">
           <div class="thumbnails-track">
             <hud-element
               cover="true"
               class="thumbnails-item"
               border="'images/borders/thumbnail.png'"
-              ng-repeat="thumbnail in thumbnails"
-              ng-click="viewFeed($index)"
+              ng-repeat="cam in cams"
+              ng-click="viewFeed(cam.id)"
               content-position="'
                 width: 94%;
                 height: 86%;
                 top: 5%;
                 left: 2%;
               '">
-              <div class="thumbnails-item-image" style="background-image: url(images/placeholder.png);"></button>
+              <button class="thumbnails-item-image">
+              <img ng-src="{{cleanAsset(cam.imageData)}}"></button>
             </hud-element>
           </div>
         </div>
