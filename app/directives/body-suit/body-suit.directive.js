@@ -52,6 +52,7 @@
 
                     switchedTime = Date.now(),
 
+                    DEACTIVATED_COLOR = 0xaaaaaa,
                     IDLE_COLOR = 0x19337f,
                     ACTIVE_COLOR = 0x3366ff,
                     PLAYING_COLOR = 0x165C3E,
@@ -170,14 +171,16 @@
                         if (intersected != intersects[0].object) {
                             resetIntersected();
                             // find eyes
-                            if (intersects[ 0 ].object.name.indexOf('eye') > -1 ) {
+                            console.log(intersects);
+                            if (intersects[ 0 ].object.name.indexOf('21') > -1 ) {
+                                console.log('got it');
                                 //change color
                                 intersected = intersects[ 0 ].object;
 
                                 if (touchIsDown && !idling) {
                                     videoPlay();
                                 } else {
-                                    intersected.material.color.setHex( ROLLOVER_COLOR );
+                                    intersected.material.color.setHex( ACTIVE_COLOR );
                                 }
 
                             }
@@ -225,7 +228,7 @@
                         mouse.y = 1;
                     }
 
-                    color = idling ? IDLE_COLOR : ACTIVE_COLOR;
+                    color = idling ? DEACTIVATED_COLOR : DEACTIVATED_COLOR;
 
                     setEyeColor(color);
                 }
@@ -400,7 +403,7 @@
                                 if ( child instanceof THREE.Mesh ) {
                                     var texture = new THREE.TextureLoader().load("obj/textures/eye.png");
                                     child.material = new THREE.MeshPhongMaterial( {
-                                        color: ACTIVE_COLOR,
+                                        color: DEACTIVATED_COLOR,
                                         emissive: 0x000000,
                                         emissiveIntensity: 0.9,
                                         map: texture,

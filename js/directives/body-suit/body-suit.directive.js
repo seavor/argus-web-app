@@ -11,7 +11,7 @@
             console.info("Initializing Body Suit: ", scope);
             var scene = new THREE.Scene(), group = new THREE.Object3D(), eyeGroup = new THREE.Object3D(), mouse = new THREE.Vector2(), renderer = new THREE.WebGLRenderer({
                 antialias: true
-            }), raycaster = new THREE.Raycaster(), camera, tween, intersected, CANVAS_WIDTH, CANVAS_HEIGHT, CANVAS_OFFSETX, CANVAS_OFFSETY, targetRotationX = 0, targetRotationOnMouseDownX = 0, mouseX = 0, mouseXOnMouseDown = 0, mouseIsDown = false, touchIsDown = false, windowHalfX, selectedEye, idleSince = Date.now(), idling = false, IDLE_AFTER_MS = 1e3 * 10, switchedTime = Date.now(), IDLE_COLOR = 1651583, ACTIVE_COLOR = 3368703, PLAYING_COLOR = 1465406, PLAYING_COLOR_BLINK = 5999735, ROLLOVER_COLOR = 1651583;
+            }), raycaster = new THREE.Raycaster(), camera, tween, intersected, CANVAS_WIDTH, CANVAS_HEIGHT, CANVAS_OFFSETX, CANVAS_OFFSETY, targetRotationX = 0, targetRotationOnMouseDownX = 0, mouseX = 0, mouseXOnMouseDown = 0, mouseIsDown = false, touchIsDown = false, windowHalfX, selectedEye, idleSince = Date.now(), idling = false, IDLE_AFTER_MS = 1e3 * 10, switchedTime = Date.now(), DEACTIVATED_COLOR = 11184810, IDLE_COLOR = 1651583, ACTIVE_COLOR = 3368703, PLAYING_COLOR = 1465406, PLAYING_COLOR_BLINK = 5999735, ROLLOVER_COLOR = 1651583;
             $timeout(init);
             document.addEventListener("mousemove", onDocumentMouseMove, false);
             document.addEventListener("mousedown", onDocumentMouseDown, false);
@@ -70,12 +70,14 @@
                 if (intersects.length > 0) {
                     if (intersected != intersects[0].object) {
                         resetIntersected();
-                        if (intersects[0].object.name.indexOf("eye") > -1) {
+                        console.log(intersects);
+                        if (intersects[0].object.name.indexOf("21") > -1) {
+                            console.log("got it");
                             intersected = intersects[0].object;
                             if (touchIsDown && !idling) {
                                 videoPlay();
                             } else {
-                                intersected.material.color.setHex(ROLLOVER_COLOR);
+                                intersected.material.color.setHex(ACTIVE_COLOR);
                             }
                         }
                     }
@@ -107,7 +109,7 @@
                     mouse.x = 1;
                     mouse.y = 1;
                 }
-                color = idling ? IDLE_COLOR : ACTIVE_COLOR;
+                color = idling ? DEACTIVATED_COLOR : DEACTIVATED_COLOR;
                 setEyeColor(color);
             }
             function setEyeColor(color) {
@@ -216,7 +218,7 @@
                             if (child instanceof THREE.Mesh) {
                                 var texture = new THREE.TextureLoader().load("obj/textures/eye.png");
                                 child.material = new THREE.MeshPhongMaterial({
-                                    color: ACTIVE_COLOR,
+                                    color: DEACTIVATED_COLOR,
                                     emissive: 0,
                                     emissiveIntensity: .9,
                                     map: texture,
