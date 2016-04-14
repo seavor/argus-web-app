@@ -25,6 +25,7 @@
                     camera,
 
                     tween,
+                    unselectedEye,
 
                     intersected,
 
@@ -52,12 +53,12 @@
 
                     switchedTime = Date.now(),
 
-                    DEACTIVATED_COLOR = 0x19337f,
                     IDLE_COLOR = 0x19337f,
-                    ACTIVE_COLOR = 0x3366ff,
+                    ACTIVE_COLOR = 0x19337f, // if waking active state, change to 0x3366ff,
                     PLAYING_COLOR = 0xff0000,
                     PLAYING_COLOR_BLINK = 0xff6666,
-                    ROLLOVER_COLOR = 0x19337f;
+                    ROLLOVER_COLOR = 0x19337f,
+                    BASE_EYE_COLOR = ACTIVE_COLOR;
 
                 $timeout(init);
 
@@ -169,18 +170,16 @@
                     if (intersects.length > 0) {
 
                         if (intersected != intersects[0].object) {
-                            resetIntersected();
+                            // resetIntersected();
                             // find eyes
-                            console.log(intersects);
                             if ((intersects[ 0 ].object.name.indexOf('eye') > -1 ) && intersects[0].object.active === true ) {
-                                console.log('got it');
                                 //change color
                                 intersected = intersects[ 0 ].object;
 
                                 if (touchIsDown && !idling) {
                                     videoPlay();
                                 } else {
-                                    intersected.material.color.setHex( ACTIVE_COLOR );
+                                    // intersected.material.color.setHex( ACTIVE_COLOR );
                                 }
 
                             }
@@ -188,7 +187,7 @@
 
                     } else {
 
-                         resetIntersected();
+                         // resetIntersected();
                     }
 
                     renderer.render(scene, camera);
@@ -204,13 +203,14 @@
                     }
 
                     if (( selectedEye ) && (intersected != selectedEye)) {
-                        selectedEye.material.color.setHex(ACTIVE_COLOR);
-                        // intersected.material.emissive.setHex(ACTIVE_COLOR);
-                        selectedEye.playing = false;
-                        intersected.material.color.setHex(PLAYING_COLOR);
-                        // intersected.material.emissive.setHex(PLAYING_COLOR);
-                        intersected.playing = true;
+                        tween.stop();
+                        unselectedEye = selectedEye;
                         selectedEye = intersected;
+                        unselectedEye.material.color.setHex(ACTIVE_COLOR);
+                        unselectedEye.playing = false;
+                        selectedEye.material.color.setHex(PLAYING_COLOR);
+                        selectedEye.playing = true;
+                        
                     }
 
                     viewFeed(selectedEye);
@@ -228,8 +228,8 @@
                         mouse.y = 1;
                     }
 
-                    color = idling ? DEACTIVATED_COLOR : DEACTIVATED_COLOR;
-
+                    color = idling ? IDLE_COLOR : ACTIVE_COLOR;
+                    BASE_EYE_COLOR = color;
                     setEyeColor(color);
                 }
 
@@ -267,14 +267,10 @@
                         targetColor;
                                                             
                     if (hexColor == PLAYING_COLOR) {
-                        console.log('tween', hexColor);
-                        console.log(PLAYING_COLOR);
                         targetColor = PLAYING_COLOR_BLINK;
                         tweenColor(color, targetColor);
 
                     } else { 
-                        console.log('tweenagain', hexColor);
-                        console.log(PLAYING_COLOR_BLINK);
                         targetColor = PLAYING_COLOR;
                         tweenColor(color, targetColor);
                     }
@@ -288,10 +284,19 @@
                     
                     tween = new TWEEN.Tween(color)
                         .to({r: rgbTarget.r, g: rgbTarget.g, b: rgbTarget.b }, 950)
+                        .onComplete(handleComplete)
                         .easing(TWEEN.Easing.Quartic.In)
                         .start();
+                        
                 } 
 
+                function handleComplete() {
+                    if (unselectedEye) {
+                       unselectedEye.material.color.setHex(BASE_EYE_COLOR);
+                       // unselectedEye = null;
+                    }
+                    
+                }
 
                 function viewFeed(selected) {
                     // console.log(selected.bodyposition);
@@ -403,7 +408,7 @@
                                 if ( child instanceof THREE.Mesh ) {
                                     var texture = new THREE.TextureLoader().load("obj/textures/eye.png");
                                     child.material = new THREE.MeshPhongMaterial( {
-                                        color: DEACTIVATED_COLOR,
+                                        color: ACTIVE_COLOR,
                                         emissive: 0x000000,
                                         emissiveIntensity: 0.9,
                                         map: texture,
@@ -416,7 +421,6 @@
                                     child.bodyposition = this.bodyposition;
                                     child.active = this.active;
                                     child.playing = false;
-                                    console.log(child.bodyposition, child.active);
                                 }
                             }.bind(this));
 
@@ -453,7 +457,8 @@
                     mouseXOnMouseDown = event.clientX - windowHalfX;
                     targetRotationOnMouseDownX = targetRotationX;
 
-                    if (intersected) { videoPlay(); }
+                    if (intersected) { 
+                        videoPlay(); }
 
                     idleSince = Date.now();
 
@@ -494,7 +499,8 @@
                         setMousePosition(touch.clientX, touch.clientY);
                     }
 
-                    if (intersected) { videoPlay(); }
+                    if (intersected) { 
+                        videoPlay(); }
 
                     //model rotation
                     if (touch && isOnCanvas(touch.clientX, touch.clientY)) {
