@@ -12,7 +12,17 @@ angular.module('app').run(['$templateCache', function($templateCache) {
     "          height: 92%;\n" +
     "          top: 4%;\n" +
     "          left: 4%;\n" +
-    "        '\"><img ng-src={{mainFeed.imageData}}></hud-element></div></div></div>"
+    "        '\"><img ng-src={{mainFeed.imageData}}></hud-element><hud-element class=video-feed-thumbnails border=\"'images/thumbnails.png'\" content-position=\"'\n" +
+    "          width: 85%;\n" +
+    "          height: 50%;\n" +
+    "          top: 25%;\n" +
+    "          left: 1%;\n" +
+    "        '\"><div class=thumbnails><div class=thumbnails-track><hud-element cover=true class=thumbnails-item border=\"'images/borders/thumbnail.png'\" ng-repeat=\"cam in cams\" ng-click=viewFeed(cam.id) content-position=\"'\n" +
+    "                width: 94%;\n" +
+    "                height: 86%;\n" +
+    "                top: 5%;\n" +
+    "                left: 2%;\n" +
+    "              '\"><button class=thumbnails-item-image><img ng-src={{cleanAsset(cam.imageData)}}></button></hud-element></div></div></hud-element></div></div></div>"
   );
 
 
