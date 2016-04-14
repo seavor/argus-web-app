@@ -20,7 +20,6 @@
             7: "Cam Label"
         };
         $scope.cams = [];
-        piSrvc.launchPi();
         stream.socket.on("cams", function(data) {
             $timeout(function() {
                 $scope.cams = data;
