@@ -48,15 +48,15 @@
                     selectedEye,
                     idleSince = Date.now(),
                     idling = false,
-                    IDLE_AFTER_MS = 1000 * 10,
+                    IDLE_AFTER_MS = 1000 * 8,
 
                     switchedTime = Date.now(),
 
-                    DEACTIVATED_COLOR = 0xaaaaaa,
+                    DEACTIVATED_COLOR = 0x19337f,
                     IDLE_COLOR = 0x19337f,
                     ACTIVE_COLOR = 0x3366ff,
-                    PLAYING_COLOR = 0x165C3E,
-                    PLAYING_COLOR_BLINK = 0x5b8c77,
+                    PLAYING_COLOR = 0xff0000,
+                    PLAYING_COLOR_BLINK = 0xff6666,
                     ROLLOVER_COLOR = 0x19337f;
 
                 $timeout(init);
@@ -113,7 +113,7 @@
                     camera = new THREE.PerspectiveCamera(60, CANVAS_WIDTH / CANVAS_HEIGHT, 1, 200);
 
                     camera.position.y = 0;
-                    camera.position.z = 35;
+                    camera.position.z = 40;
                     camera.lookAt(scene.position);
 
                     // initializing mouse off center
@@ -172,7 +172,7 @@
                             resetIntersected();
                             // find eyes
                             console.log(intersects);
-                            if (intersects[ 0 ].object.name.indexOf('21') > -1 ) {
+                            if ((intersects[ 0 ].object.name.indexOf('eye') > -1 ) && intersects[0].object.active === true ) {
                                 console.log('got it');
                                 //change color
                                 intersected = intersects[ 0 ].object;
@@ -414,8 +414,9 @@
                                     } );
 
                                     child.bodyposition = this.bodyposition;
+                                    child.active = this.active;
                                     child.playing = false;
-                                    //console.log(child);
+                                    console.log(child.bodyposition, child.active);
                                 }
                             }.bind(this));
 
