@@ -54,7 +54,7 @@
                     switchedTime = Date.now(),
 
                     IDLE_COLOR = 0x19337f,
-                    ACTIVE_COLOR = 0x19337f, // if waking active state, change to 0x3366ff,
+                    ACTIVE_COLOR = 0x3366ff, // if active state 0x3366ff, if not use IDLE_COLOR
                     PLAYING_COLOR = 0xff0000,
                     PLAYING_COLOR_BLINK = 0xff6666,
                     ROLLOVER_COLOR = 0x19337f,

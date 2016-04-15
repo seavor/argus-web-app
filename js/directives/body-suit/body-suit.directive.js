@@ -11,7 +11,7 @@
             console.info("Initializing Body Suit: ", scope);
             var scene = new THREE.Scene(), group = new THREE.Object3D(), eyeGroup = new THREE.Object3D(), mouse = new THREE.Vector2(), renderer = new THREE.WebGLRenderer({
                 antialias: true
-            }), raycaster = new THREE.Raycaster(), camera, tween, unselectedEye, intersected, CANVAS_WIDTH, CANVAS_HEIGHT, CANVAS_OFFSETX, CANVAS_OFFSETY, targetRotationX = 0, targetRotationOnMouseDownX = 0, mouseX = 0, mouseXOnMouseDown = 0, mouseIsDown = false, touchIsDown = false, windowHalfX, selectedEye, idleSince = Date.now(), idling = false, IDLE_AFTER_MS = 1e3 * 8, switchedTime = Date.now(), IDLE_COLOR = 1651583, ACTIVE_COLOR = 1651583, PLAYING_COLOR = 16711680, PLAYING_COLOR_BLINK = 16737894, ROLLOVER_COLOR = 1651583, BASE_EYE_COLOR = ACTIVE_COLOR;
+            }), raycaster = new THREE.Raycaster(), camera, tween, unselectedEye, intersected, CANVAS_WIDTH, CANVAS_HEIGHT, CANVAS_OFFSETX, CANVAS_OFFSETY, targetRotationX = 0, targetRotationOnMouseDownX = 0, mouseX = 0, mouseXOnMouseDown = 0, mouseIsDown = false, touchIsDown = false, windowHalfX, selectedEye, idleSince = Date.now(), idling = false, IDLE_AFTER_MS = 1e3 * 8, switchedTime = Date.now(), IDLE_COLOR = 1651583, ACTIVE_COLOR = 3368703, PLAYING_COLOR = 16711680, PLAYING_COLOR_BLINK = 16737894, ROLLOVER_COLOR = 1651583, BASE_EYE_COLOR = ACTIVE_COLOR;
             $timeout(init);
             document.addEventListener("mousemove", onDocumentMouseMove, false);
             document.addEventListener("mousedown", onDocumentMouseDown, false);
