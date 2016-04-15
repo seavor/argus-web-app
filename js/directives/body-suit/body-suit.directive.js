@@ -11,7 +11,7 @@
             console.info("Initializing Body Suit: ", scope);
             var scene = new THREE.Scene(), group = new THREE.Object3D(), eyeGroup = new THREE.Object3D(), mouse = new THREE.Vector2(), renderer = new THREE.WebGLRenderer({
                 antialias: true
-            }), raycaster = new THREE.Raycaster(), camera, tween, intersected, CANVAS_WIDTH, CANVAS_HEIGHT, CANVAS_OFFSETX, CANVAS_OFFSETY, targetRotationX = 0, targetRotationOnMouseDownX = 0, mouseX = 0, mouseXOnMouseDown = 0, mouseIsDown = false, touchIsDown = false, windowHalfX, selectedEye, idleSince = Date.now(), idling = false, IDLE_AFTER_MS = 1e3 * 8, switchedTime = Date.now(), DEACTIVATED_COLOR = 1651583, IDLE_COLOR = 1651583, ACTIVE_COLOR = 3368703, PLAYING_COLOR = 16711680, PLAYING_COLOR_BLINK = 16737894, ROLLOVER_COLOR = 1651583;
+            }), raycaster = new THREE.Raycaster(), camera, tween, unselectedEye, intersected, CANVAS_WIDTH, CANVAS_HEIGHT, CANVAS_OFFSETX, CANVAS_OFFSETY, targetRotationX = 0, targetRotationOnMouseDownX = 0, mouseX = 0, mouseXOnMouseDown = 0, mouseIsDown = false, touchIsDown = false, windowHalfX, selectedEye, idleSince = Date.now(), idling = false, IDLE_AFTER_MS = 1e3 * 8, switchedTime = Date.now(), IDLE_COLOR = 1651583, ACTIVE_COLOR = 1651583, PLAYING_COLOR = 16711680, PLAYING_COLOR_BLINK = 16737894, ROLLOVER_COLOR = 1651583, BASE_EYE_COLOR = ACTIVE_COLOR;
             $timeout(init);
             document.addEventListener("mousemove", onDocumentMouseMove, false);
             document.addEventListener("mousedown", onDocumentMouseDown, false);
@@ -69,21 +69,14 @@
                 if (tween) tween.update(time);
                 if (intersects.length > 0) {
                     if (intersected != intersects[0].object) {
-                        resetIntersected();
-                        console.log(intersects);
                         if (intersects[0].object.name.indexOf("eye") > -1 && intersects[0].object.active === true) {
-                            console.log("got it");
                             intersected = intersects[0].object;
                             if (touchIsDown && !idling) {
                                 videoPlay();
-                            } else {
-                                intersected.material.color.setHex(ACTIVE_COLOR);
-                            }
+                            } else {}
                         }
                     }
-                } else {
-                    resetIntersected();
-                }
+                } else {}
                 renderer.render(scene, camera);
             }
             function videoPlay() {
@@ -93,11 +86,13 @@
                     selectedEye = intersected;
                 }
                 if (selectedEye && intersected != selectedEye) {
-                    selectedEye.material.color.setHex(ACTIVE_COLOR);
-                    selectedEye.playing = false;
-                    intersected.material.color.setHex(PLAYING_COLOR);
-                    intersected.playing = true;
+                    tween.stop();
+                    unselectedEye = selectedEye;
                     selectedEye = intersected;
+                    unselectedEye.material.color.setHex(ACTIVE_COLOR);
+                    unselectedEye.playing = false;
+                    selectedEye.material.color.setHex(PLAYING_COLOR);
+                    selectedEye.playing = true;
                 }
                 viewFeed(selectedEye);
             }
@@ -109,7 +104,8 @@
                     mouse.x = 1;
                     mouse.y = 1;
                 }
-                color = idling ? DEACTIVATED_COLOR : DEACTIVATED_COLOR;
+                color = idling ? IDLE_COLOR : ACTIVE_COLOR;
+                BASE_EYE_COLOR = color;
                 setEyeColor(color);
             }
             function setEyeColor(color) {
@@ -133,13 +129,9 @@
             function switchEyeColor() {
                 var color = selectedEye.material.color, hexColor = color.getHex(), targetColor;
                 if (hexColor == PLAYING_COLOR) {
-                    console.log("tween", hexColor);
-                    console.log(PLAYING_COLOR);
                     targetColor = PLAYING_COLOR_BLINK;
                     tweenColor(color, targetColor);
                 } else {
-                    console.log("tweenagain", hexColor);
-                    console.log(PLAYING_COLOR_BLINK);
                     targetColor = PLAYING_COLOR;
                     tweenColor(color, targetColor);
                 }
@@ -151,7 +143,12 @@
                     r: rgbTarget.r,
                     g: rgbTarget.g,
                     b: rgbTarget.b
-                }, 950).easing(TWEEN.Easing.Quartic.In).start();
+                }, 950).onComplete(handleComplete).easing(TWEEN.Easing.Quartic.In).start();
+            }
+            function handleComplete() {
+                if (unselectedEye) {
+                    unselectedEye.material.color.setHex(BASE_EYE_COLOR);
+                }
             }
             function viewFeed(selected) {}
             function setCanvasSize() {
@@ -218,7 +215,7 @@
                             if (child instanceof THREE.Mesh) {
                                 var texture = new THREE.TextureLoader().load("obj/textures/eye.png");
                                 child.material = new THREE.MeshPhongMaterial({
-                                    color: DEACTIVATED_COLOR,
+                                    color: ACTIVE_COLOR,
                                     emissive: 0,
                                     emissiveIntensity: .9,
                                     map: texture,
@@ -227,7 +224,6 @@
                                 child.bodyposition = this.bodyposition;
                                 child.active = this.active;
                                 child.playing = false;
-                                console.log(child.bodyposition, child.active);
                             }
                         }.bind(this));
                         eyeGroup.add(object);
