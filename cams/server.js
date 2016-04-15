@@ -30,23 +30,35 @@ var clients = [];
 // WebSockets work with the HTTP server
 var io = require('socket.io').listen(httpServer);
 
+var fakePiAssets = (function(){
+    var base = './images/fake-cams/',
+        feeds = fs.readdirSync(base),
+        assets = [],
+        collection, feed, fx, images, ix, image;
+
+    for (fx in feeds) {
+        feed = feeds[fx];
+        if (fs.lstatSync(base + feed).isDirectory()) {
+            collection = [];
+            images = fs.readdirSync(base + feed);
+            for (ix in images) {
+                image = images[ix];
+                if (fs.lstatSync(base + feed + '/' + image).isFile()) {
+                    collection.push('data:image/jpeg;base64,' + fs.readFileSync(base + feed + '/' + image, 'base64'));
+                }
+            }
+
+            assets.push(collection);
+        }
+    }
+
+    return assets;
+})();
+
 // Register a callback function to run when we have an individual connection
 // This is run for each individual user that connects
 // We are given a websocket object in our function
 io.sockets.on('connection', function (socket) {
-
-    var fakeImages = [
-        'agile.jpg',
-        'bag.jpg',
-        'finn.jpg',
-        'finn2.jpg',
-        'keyboard.jpeg',
-        'loading.jpg',
-        'older.jpg',
-        'pulp.jpg',
-        'salty.jpg',
-        'testers.jpg'
-    ];
 
     // Generic Requests
     socket.on('who', newConnection);
@@ -122,20 +134,15 @@ io.sockets.on('connection', function (socket) {
     }
 
     function newFakePi(data) {
-        var maxImgIdx = 9,
-            count = 0;
-
         newConnection('pi');
 
-        setInterval(function() {
-            var image = fs.readFile(__dirname + '/../images/meme-pi/' + fakeImages[count], function (err, data) {
-                // if there is an error
-                if (err) { return; }
-                newImage('data:image/jpeg;base64,' + new Buffer(data).toString('base64'));
-            });
+        var feed = fakePiAssets[pis.length % 10],
+            counter = 0;
 
-            count = count == maxImgIdx ? 0 : count + 1;
-        }, (1000 / 30));
+        setInterval(function() {
+            newImage(feed[counter]);
+            counter = (counter == feed.length - 1) ? 0 : counter + 1;
+        }, (1000 / 5));
     }
 
     /* Web Requests
@@ -171,7 +178,7 @@ setInterval(function() {
         client,
         c;
 
-    if (availPis && availClients) {
+    if (availClients) {
         // Store current images in formatted object
         for (p = 0; availPis > p; p++) {
             pi = pis[p];
@@ -191,7 +198,7 @@ setInterval(function() {
             // If image set has client's mainFeed image, remove
             if (images[client.mainFeed]) { delete images[client.mainFeed]; }
             // Else, reassign mainFeed image to first registered pi
-            else { client.mainFeed = pis[0].id; }
+            else { client.mainFeed = availPis ? pis[0].id : null; }
 
             // Push image set to client
             client.emit("cams", images);
