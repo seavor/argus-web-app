@@ -115,7 +115,7 @@
                 if (eye.position === position && !side || eye.side === side) {
                   console.log(eye);
                   stream.socket.emit('selectFeed', eye.id);
-                  suitSrvc.mainFeed = eye.id;
+                  // suitSrvc.mainFeed = eye.id;
                 }
               });
             }
