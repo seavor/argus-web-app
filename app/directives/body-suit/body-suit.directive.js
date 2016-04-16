@@ -307,12 +307,10 @@
                 function incomingFeed(incoming) {
                     var i,
                         child;
-
                     for (i = 0; i < eyeGroup.children.length; i++) {
 
                         child = eyeGroup.children[i];
-
-                        if ((child.children[0].side == incoming.side) && (child.children[0].position == incoming.position)) {
+                        if ((child.children[0].bodySide == incoming.side) && (child.children[0].bodyPosition == incoming.position)) {
                             intersected = child.children[0];
                             videoPlay();
                         }
@@ -437,8 +435,8 @@
 
                                     } );
 
-                                    child.position = this.position;
-                                    child.side = this.side;
+                                    child.bodyPosition = this.position;
+                                    child.bodySide = this.side;
                                     child.active = this.active;
                                     child.playing = false;
                                 }
