@@ -180,9 +180,10 @@ io.sockets.on('connection', function (socket) {
             // Send image with pi_id and imagedata packed in object
             if (clients[i].mainFeed == socket.id) {
                 clients[i].emit("mainFeed", {
-                    "id": socket.id,
-                    "imageData": data,
-                    "eye": socket.argus
+                    id: socket.id,
+                    imageData: data,
+                    position: socket.argus.position,
+                    side: socket.argus.side
                 });
             }
         }
@@ -251,8 +252,8 @@ setInterval(function() {
                 images[pi.id] = {
                     "id": pi.id,
                     "imageData": pi.lastimage,
-                    "position": pi.position,
-                    "side": pi.side
+                    "position": pi.argus.position,
+                    "side": pi.argus.side
                 };
             }
         }

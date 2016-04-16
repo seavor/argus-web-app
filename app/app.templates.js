@@ -2,12 +2,12 @@ angular.module('app').run(['$templateCache', function($templateCache) {
   'use strict';
 
   $templateCache.put('app/dashboard/dashboard.template.html',
-    "<div class=home-page><div class=home-page-header><a id=siteID ui-sref=dashboard>the argus project</a> <span class=home-page-header-byline>THE WHOLE WORLD IS WATCHING</span><p class=home-page-header-tagline>Counter-surveillance Armor for the Citizen Body</p><img class=home-page-header-map src=images/map.png apng></div><div class=home-page-content><div class=body-suit><hud-element class=body-suit-directive border=\"'images/borders/suit.svg'\" content-position=\"'\n" +
-    "        width: 60%;\n" +
-    "        height: 75%;\n" +
-    "        top: 14%;\n" +
-    "        left: 17%;\n" +
-    "      '\"><body-suit class=body-suit-directive-object></body-suit></hud-element><hud-animation class=body-suit-animation src=\"'images/bottom-hud.png'\"></hud-animation></div><div class=video-feed><hud-element class=video-feed-directive border=\"'images/video-feed.png'\" cover=true label=mainFeed.id content-position=\"'\n" +
+    "<div class=home-page><div class=home-page-header><a id=siteID ui-sref=dashboard>the argus project</a> <span class=home-page-header-byline>THE WHOLE WORLD IS WATCHING</span><p class=home-page-header-tagline>Counter-surveillance Armor for the Citizen Body</p><img class=home-page-header-map src=images/map.png apng></div><div class=home-page-content><div class=body-suit><hud-element class=body-suit-directive border=\"'images/borders/suit.svg'\" label=\"'Select a Feed'\" content-position=\"'\n" +
+    "          width: 60%;\n" +
+    "          height: 75%;\n" +
+    "          top: 8%;\n" +
+    "          left: 17%;\n" +
+    "        '\"><body-suit class=body-suit-directive-object></body-suit></hud-element><hud-animation class=body-suit-animation src=\"'images/bottom-hud.png'\"></hud-animation></div><div class=video-feed><hud-element class=video-feed-directive border=\"'images/video-feed.png'\" cover=true label=\"mainFeed ? (mainFeed.position + ' : ' + mainFeed.side) : 'Searching for feeds..'\" content-position=\"'\n" +
     "          width: 92%;\n" +
     "          height: 92%;\n" +
     "          top: 4%;\n" +
@@ -22,7 +22,7 @@ angular.module('app').run(['$templateCache', function($templateCache) {
     "                height: 86%;\n" +
     "                top: 5%;\n" +
     "                left: 2%;\n" +
-    "              '\"><button class=thumbnails-item-image><img ng-src={{cleanAsset(cam.imageData)}}></button></hud-element></div></div></hud-element></div></div></div>"
+    "              '\"><button class=thumbnails-item-image><img ng-src={{cam.imageData}}></button></hud-element></div></div></hud-element></div></div></div>"
   );
 
 

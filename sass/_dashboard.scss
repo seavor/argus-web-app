@@ -63,6 +63,14 @@
     width: 30%;
     padding-right: 2.5vw;
 
+    .hud-element-label {
+      background: none;
+      color: white;
+      top: initial;
+      bottom: 12%;
+      left: 48%;
+    }
+
     &-directive {
       padding-bottom: 167%;
       margin-bottom: 8%;

@@ -80,21 +80,35 @@
                 renderer.render(scene, camera);
             }
             function videoPlay() {
+                var validFeed;
                 if (!selectedEye) {
-                    intersected.material.color.setHex(PLAYING_COLOR);
-                    intersected.playing = true;
-                    selectedEye = intersected;
+                    console.log("Select Eye");
+                    validFeed = viewFeed(intersected);
+                    if (validFeed) {
+                        console.log("Eye Valid");
+                        intersected.material.color.setHex(PLAYING_COLOR);
+                        intersected.playing = true;
+                        selectedEye = intersected;
+                    } else {
+                        flashColor(intersected);
+                    }
                 }
                 if (selectedEye && intersected != selectedEye) {
-                    tween.stop();
-                    unselectedEye = selectedEye;
-                    selectedEye = intersected;
-                    unselectedEye.material.color.setHex(ACTIVE_COLOR);
-                    unselectedEye.playing = false;
-                    selectedEye.material.color.setHex(PLAYING_COLOR);
-                    selectedEye.playing = true;
+                    console.log("Change Eye");
+                    validFeed = viewFeed(selectedEye);
+                    if (validFeed) {
+                        console.log("Eye Valid");
+                        tween.stop();
+                        unselectedEye = selectedEye;
+                        selectedEye = intersected;
+                        unselectedEye.material.color.setHex(ACTIVE_COLOR);
+                        unselectedEye.playing = false;
+                        selectedEye.material.color.setHex(PLAYING_COLOR);
+                        selectedEye.playing = true;
+                    } else {
+                        flashColor(selectedEye);
+                    }
                 }
-                viewFeed(selectedEye);
             }
             function toggleIdleState() {
                 var color;
@@ -136,6 +150,9 @@
                     tweenColor(color, targetColor);
                 }
             }
+            function flashColor(eye) {
+                console.log("Eye Flash: Invalid Camera Selected");
+            }
             function tweenColor(color, targetColor) {
                 var rgbTarget;
                 rgbTarget = new THREE.Color(targetColor);
@@ -151,14 +168,15 @@
                 }
             }
             function viewFeed(selected) {
-                suitSrvc.selectFeedByPosition(selected.position, selected.side);
+                return suitSrvc.selectFeedByPosition(selected.bodyPosition, selected.bodySide);
             }
             function incomingFeed(incoming) {
-                var i, child;
-                for (i = 0; i < eyeGroup.children.length; i++) {
-                    child = eyeGroup.children[i];
-                    if (child.children[0].bodySide == incoming.side && child.children[0].bodyPosition == incoming.position) {
-                        intersected = child.children[0];
+                var length = eyeGroup.children.length, i = 0, child;
+                for (i; length > i; i++) {
+                    child = eyeGroup.children[i].children[0];
+                    if (child.bodyPosition == incoming.position && (!incoming.side || child.bodySide == incoming.side)) {
+                        intersected = child;
+                        console.log(child);
                         videoPlay();
                     }
                 }

@@ -7,12 +7,17 @@
   </div>
   <div class="home-page-content">
     <div class="body-suit">
-      <hud-element class="body-suit-directive" border="'images/borders/suit.svg'" content-position="'
-        width: 60%;
-        height: 75%;
-        top: 14%;
-        left: 17%;
-      '">
+      <hud-element
+        class="body-suit-directive"
+        border="'images/borders/suit.svg'"
+        label="'Select a Feed'"
+        content-position="'
+          width: 60%;
+          height: 75%;
+          top: 8%;
+          left: 17%;
+        '"
+      >
         <body-suit class="body-suit-directive-object"></body-suit>
       </hud-element>
       <hud-animation class="body-suit-animation" src="'images/bottom-hud.png'"></hud-animation>
@@ -22,7 +27,7 @@
         class="video-feed-directive"
         border="'images/video-feed.png'"
         cover="true"
-        label="mainFeed.id"
+        label="mainFeed ? (mainFeed.position + ' : ' + mainFeed.side) : 'Searching for feeds..'"
         content-position="'
           width: 92%;
           height: 92%;
@@ -57,7 +62,7 @@
                 left: 2%;
               '">
               <button class="thumbnails-item-image">
-              <img ng-src="{{cleanAsset(cam.imageData)}}"></button>
+              <img ng-src="{{cam.imageData}}"></button>
             </hud-element>
           </div>
         </div>

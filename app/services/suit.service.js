@@ -6,7 +6,8 @@
             var factory = {
                     getEyes: getEyes,
                     selectFeedByPosition: selectFeedByPosition,
-                    mainFeed: null
+                    mainFeed: null,
+                    feeds: []
                 },
 
                 eyes = [
@@ -64,12 +65,6 @@
                     side: 'center',
                     position: 'upperback',
                   },
-                  // {
-                  //   filename: 'eyes.004.obj',
-                  //   active: true,
-                  //   side: 'center',
-                  //   position: 'stomach',
-                  // },
                   {
                     filename: 'eyes.018.obj',
                     active: true,
@@ -87,19 +82,7 @@
                     active: true,
                     side: 'left',
                     position: 'thigh',
-                  },
-                  // {
-                  //   filename: 'eyes.013.obj',
-                  //   active: true,
-                  //   side: 'right',
-                  //   position: 'shin',
-                  // },
-                  // {
-                  //   filename: 'eyes.007.obj',
-                  //   active: true,
-                  //   side: 'left',
-                  //   position: 'shin',
-                  // },
+                  }
                 ];
 
             return factory;
@@ -111,13 +94,21 @@
             }
 
             function selectFeedByPosition(position, side) {
-              angular.forEach(eyes, function(eye) {
-                if (eye.position === position && !side || eye.side === side) {
-                  console.log(eye);
-                  stream.socket.emit('selectFeed', eye.id);
-                  // suitSrvc.mainFeed = eye.id;
+              var validTarget = false;
+
+              angular.forEach(factory.feeds, function(feed) {
+                if (feed.position === position && (!side || feed.side === side)) {
+                  console.log('Valid Target: ', position, side);
+
+                  validTarget = true;
+                  stream.socket.emit('selectFeed', feed.id);
+                  factory.mainFeed = feed.id;
+                } else {
+                  console.log('Invalid Target: ', position, side);
                 }
               });
+
+              return validTarget;
             }
         }
     ]);

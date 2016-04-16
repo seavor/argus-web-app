@@ -22,4 +22,21 @@
   &-directive {
     z-index: 1;
   }
+
+  &-label {
+    font-size: 1.25vw;
+    position: absolute;
+    top: 8%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 5;
+    color: black;
+    background: rgba(255, 255, 255, .5);
+    padding: 3px 7px;
+    text-transform: uppercase;
+
+    @media (max-width: $min-content-width) {
+      font-size: 12px;
+    }
+  }
 }

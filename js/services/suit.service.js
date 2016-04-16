@@ -4,7 +4,8 @@
         var factory = {
             getEyes: getEyes,
             selectFeedByPosition: selectFeedByPosition,
-            mainFeed: null
+            mainFeed: null,
+            feeds: []
         }, eyes = [ {
             filename: "eyes.002.obj",
             active: true,
@@ -71,12 +72,18 @@
             return eyes;
         }
         function selectFeedByPosition(position, side) {
-            angular.forEach(eyes, function(eye) {
-                if (eye.position === position && !side || eye.side === side) {
-                    console.log(eye);
-                    stream.socket.emit("selectFeed", eye.id);
+            var validTarget = false;
+            angular.forEach(factory.feeds, function(feed) {
+                if (feed.position === position && (!side || feed.side === side)) {
+                    console.log("Valid Target: ", position, side);
+                    validTarget = true;
+                    stream.socket.emit("selectFeed", feed.id);
+                    factory.mainFeed = feed.id;
+                } else {
+                    console.log("Invalid Target: ", position, side);
                 }
             });
+            return validTarget;
         }
     } ]);
 })();
