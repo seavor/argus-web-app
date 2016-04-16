@@ -1,4 +1,5 @@
 <div class="hud-element">
   <img class="hud-element-border" ng-src="{{border}}" style="z-index: {{cover ? 2 : 0}};" apng></img>
   <div class="hud-element-directive" style="{{contentPosition}}" ng-transclude></div>
+  <span class="hud-element-label" ng-if="label">{{label}}</span>
 </div>

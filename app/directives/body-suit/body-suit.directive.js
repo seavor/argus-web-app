@@ -212,7 +212,7 @@
                         unselectedEye.playing = false;
                         selectedEye.material.color.setHex(PLAYING_COLOR);
                         selectedEye.playing = true;
-                        
+
                     }
 
                     viewFeed(selectedEye);
@@ -255,24 +255,24 @@
 
                     timeNow = Date.now();
                     elapsedTime = timeNow - switchedTime;
-                    
+
                     if (elapsedTime > 1200) {
                         switchEyeColor();
                         switchedTime = Date.now();
                     }
-                    
+
                 }
 
                 function switchEyeColor() {
                     var color = selectedEye.material.color,
                         hexColor = color.getHex(),
                         targetColor;
-                                                            
+
                     if (hexColor == PLAYING_COLOR) {
                         targetColor = PLAYING_COLOR_BLINK;
                         tweenColor(color, targetColor);
 
-                    } else { 
+                    } else {
                         targetColor = PLAYING_COLOR;
                         tweenColor(color, targetColor);
                     }
@@ -283,25 +283,25 @@
                     var rgbTarget;
 
                     rgbTarget = new THREE.Color(targetColor);
-                    
+
                     tween = new TWEEN.Tween(color)
                         .to({r: rgbTarget.r, g: rgbTarget.g, b: rgbTarget.b }, 950)
                         .onComplete(handleComplete)
                         .easing(TWEEN.Easing.Quartic.In)
                         .start();
-                        
-                } 
+
+                }
 
                 function handleComplete() {
                     if (unselectedEye) {
                        unselectedEye.material.color.setHex(BASE_EYE_COLOR);
                        // unselectedEye = null;
                     }
-                    
+
                 }
 
                 function viewFeed(selected) {
-                    // console.log(selected.bodyposition);
+                    suitSrvc.selectFeedByPosition(selected.position, selected.side);
                 }
 
                 function incomingFeed(incoming) {
@@ -439,7 +439,8 @@
 
                                     } );
 
-                                    child.bodyposition = this.bodyposition;
+                                    child.position = this.position;
+                                    child.side = this.side;
                                     child.active = this.active;
                                     child.playing = false;
                                 }
@@ -478,7 +479,7 @@
                     mouseXOnMouseDown = event.clientX - windowHalfX;
                     targetRotationOnMouseDownX = targetRotationX;
 
-                    if (intersected) { 
+                    if (intersected) {
                         videoPlay(); }
 
                     idleSince = Date.now();
@@ -520,7 +521,7 @@
                         setMousePosition(touch.clientX, touch.clientY);
                     }
 
-                    if (intersected) { 
+                    if (intersected) {
                         videoPlay(); }
 
                     //model rotation

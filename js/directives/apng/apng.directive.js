@@ -7,6 +7,7 @@
         };
         return directive;
         function linker(scope, elem, attrs) {
+            console.info("Initializing APNG Directive: ", elem);
             elem.load(function() {
                 apngSrvc.initImage(elem[0]);
             });

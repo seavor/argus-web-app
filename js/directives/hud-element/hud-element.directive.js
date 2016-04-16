@@ -9,7 +9,8 @@
             scope: {
                 border: "=",
                 cover: "=",
-                contentPosition: "="
+                contentPosition: "=",
+                label: "="
             }
         };
         return directive;

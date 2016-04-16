@@ -3,15 +3,12 @@
         var directive = {
             restrict: "E",
             replace: true,
-            template: '<img ng-src="{{src}}">',
-            link: linker,
-            scope: {
-                src: "="
-            }
+            template: "<img>",
+            link: linker
         };
         return directive;
         function linker(scope, elem, attrs) {
-            console.info("Initializing Video Feed: ", scope);
+            console.info("Initializing Video Feed: ", scope.image);
         }
     } ]);
 })();
