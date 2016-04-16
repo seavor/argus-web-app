@@ -202,6 +202,8 @@
                         selectedEye = intersected;
                     }
 
+
+
                     if (( selectedEye ) && (intersected != selectedEye)) {
                         tween.stop();
                         unselectedEye = selectedEye;
@@ -301,6 +303,25 @@
                 function viewFeed(selected) {
                     // console.log(selected.bodyposition);
                 }
+
+                function incomingFeed(incoming) {
+                    var i,
+                        child;
+
+                    for (i = 0; i < eyeGroup.children.length; i++) {
+
+                        child = eyeGroup.children[i];
+
+                        if ((child.children[0].side == incoming.side) && (child.children[0].position == incoming.position)) {
+                            intersected = child.children[0];
+                            videoPlay();
+                        }
+                    }
+
+                }
+                
+
+
 
                 /*************************************************/
                 /* Helper Methods
