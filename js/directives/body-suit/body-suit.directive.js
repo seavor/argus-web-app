@@ -153,6 +153,16 @@
             function viewFeed(selected) {
                 suitSrvc.selectFeedByPosition(selected.position, selected.side);
             }
+            function incomingFeed(incoming) {
+                var i, child;
+                for (i = 0; i < eyeGroup.children.length; i++) {
+                    child = eyeGroup.children[i];
+                    if (child.children[0].bodySide == incoming.side && child.children[0].bodyPosition == incoming.position) {
+                        intersected = child.children[0];
+                        videoPlay();
+                    }
+                }
+            }
             function setCanvasSize() {
                 CANVAS_WIDTH = elem.width();
                 CANVAS_HEIGHT = elem.height();
@@ -223,8 +233,8 @@
                                     map: texture,
                                     shininess: 50
                                 });
-                                child.position = this.position;
-                                child.side = this.side;
+                                child.bodyPosition = this.position;
+                                child.bodySide = this.side;
                                 child.active = this.active;
                                 child.playing = false;
                             }
