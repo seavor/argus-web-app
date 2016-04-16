@@ -30,6 +30,59 @@ var clients = [];
 // WebSockets work with the HTTP server
 var io = require('socket.io').listen(httpServer);
 
+var fakeEyes = [
+    {
+        position: 'head',
+        side: 'center'
+    },
+    {
+        position: 'ear',
+        side: 'right'
+    },
+    {
+        position: 'ear',
+        side: 'left'
+    },
+    {
+        position: 'shoulder',
+        side: 'right'
+    },
+    {
+        position: 'shoulder',
+        side: 'left'
+    },
+    {
+        position: 'hand',
+        side: 'right'
+    },
+    {
+        position: 'hand',
+        side: 'left'
+    },
+    {
+        position: 'chest',
+        side: 'center'
+    },
+    {
+        position: 'upperback',
+        side: 'center'
+    },
+    {
+        position: 'lowerback',
+        side: 'center'
+    },
+    {
+        position: 'thigh',
+        side: 'right'
+    },
+    {
+        position: 'thigh',
+        side: 'left'
+    }
+];
+
+var activeFakeEyes = 0;
+
 var fakePiAssets = (function(){
     var base = './images/fake-cams/',
         feeds = fs.readdirSync(base),
@@ -76,14 +129,14 @@ io.sockets.on('connection', function (socket) {
     /*******************************************/
 
     function newConnection(data) {
-        console.log("New Connection: " + data + "[" + socket.id + "]");
+        console.log("New Connection: " + (data.type || data) + "[" + (data.src || socket.id) + "]");
 
         var availClients = clients.length,
             i = 0;
 
-        socket.argus = { type: data };
+        socket.argus = data;
 
-        if (data == "pi") {
+        if (data.type == "pi") {
             pis.push(socket);
 
             // If first pi is being initialed,
@@ -106,10 +159,11 @@ io.sockets.on('connection', function (socket) {
 
         if (socket.argus.type == 'pi') {
             idx = pis.indexOf(socket);
-            if (idx != -1) {pis.splice(idx, 1);}
+            if (socket.argus.fake) { activeFakeEyes--; }
+            if (idx != -1) { pis.splice(idx, 1); }
         } else {
             idx = clients.indexOf(socket);
-            if (idx != -1) {clients.splice(idx, 1);}
+            if (idx != -1) { clients.splice(idx, 1); }
         }
     }
 
@@ -127,14 +181,24 @@ io.sockets.on('connection', function (socket) {
             if (clients[i].mainFeed == socket.id) {
                 clients[i].emit("mainFeed", {
                     "id": socket.id,
-                    "imageData": data
+                    "imageData": data,
+                    "eye": socket.argus
                 });
             }
         }
     }
 
     function newFakePi(data) {
-        newConnection('pi');
+        var useEye = fakeEyes[activeFakeEyes % fakeEyes.length];
+
+        newConnection({
+            type: 'pi',
+            fake: true,
+            position: useEye.position,
+            side: useEye.side
+        });
+
+        activeFakeEyes++;
 
         var feed = fakePiAssets[pis.length % 10],
             counter = 0;
@@ -186,7 +250,9 @@ setInterval(function() {
             if (pi.lastimage) {
                 images[pi.id] = {
                     "id": pi.id,
-                    "imageData": pi.lastimage
+                    "imageData": pi.lastimage,
+                    "position": pi.position,
+                    "side": pi.side
                 };
             }
         }

@@ -150,7 +150,9 @@
                     unselectedEye.material.color.setHex(BASE_EYE_COLOR);
                 }
             }
-            function viewFeed(selected) {}
+            function viewFeed(selected) {
+                suitSrvc.selectFeedByPosition(selected.position, selected.side);
+            }
             function setCanvasSize() {
                 CANVAS_WIDTH = elem.width();
                 CANVAS_HEIGHT = elem.height();
@@ -221,7 +223,8 @@
                                     map: texture,
                                     shininess: 50
                                 });
-                                child.bodyposition = this.bodyposition;
+                                child.position = this.position;
+                                child.side = this.side;
                                 child.active = this.active;
                                 child.playing = false;
                             }

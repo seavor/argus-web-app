@@ -1,12 +1,12 @@
 (function() {
-    angular.module("app").controller("DashboardCtrl", [ "$scope", "$timeout", "$state", "$sce", "stream", "apngSrvc", "localStorageService", "piSrvc", function($scope, $timeout, $state, $sce, stream, apngSrvc, localStorageService, piSrvc) {
+    angular.module("app").controller("DashboardCtrl", [ "$scope", "$timeout", "$state", "$sce", "stream", "apngSrvc", "suitSrvc", "piSrvc", function($scope, $timeout, $state, $sce, stream, apngSrvc, suitSrvc, piSrvc) {
         console.info("Initializing Dashboard Controller: ", $scope);
         if (!apngSrvc.assetsCached()) {
             $state.go("initializer");
             return;
         }
-        if (localStorageService.get("mainFeed")) {
-            viewFeed(localStorageService.get("mainFeed"));
+        if (suitSrvc.mainFeed) {
+            viewFeed(suitSrvc.mainFeed);
         }
         $scope.cleanAsset = cleanAsset;
         $scope.viewFeed = viewFeed;
@@ -28,11 +28,12 @@
         stream.socket.on("mainFeed", function(data) {
             $timeout(function() {
                 $scope.mainFeed = data;
+                apngSrvc.mainFeed = data.id;
             });
         });
         function viewFeed(id) {
             stream.socket.emit("selectFeed", id);
-            localStorageService.set("mainFeed", id);
+            suitSrvc.mainFeed = id;
         }
         function cleanAsset(asset) {
             return $sce.trustAsResourceUrl(asset);
