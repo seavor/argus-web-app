@@ -2,7 +2,7 @@ angular.module('app').run(['$templateCache', function($templateCache) {
   'use strict';
 
   $templateCache.put('app/dashboard/dashboard.template.html',
-    "<div class=home-page><div class=home-page-header><a id=siteID ui-sref=dashboard>the argus project</a> <span class=home-page-header-byline>THE WHOLE WORLD IS WATCHING</span><p class=home-page-header-tagline>Counter-surveillance Armor for the Citizen Body</p><img class=home-page-header-map src=images/map.png apng></div><div class=home-page-content><div class=body-suit><hud-element class=body-suit-directive border=\"'images/borders/suit.svg'\" label=\"'Select a Feed'\" content-position=\"'\n" +
+    "<div class=home-page><div class=home-page-header><a id=siteID ui-sref=dashboard>the argus project</a> <span class=home-page-header-byline>THE WHOLE WORLD IS WATCHING</span><p class=home-page-header-tagline>Counter-surveillance Armor for the Citizen Body</p><img class=home-page-header-map src=images/map.png apng></div><div class=home-page-content><div class=body-suit><hud-element class=body-suit-directive border=\"'images/borders/suit.svg'\" content-position=\"'\n" +
     "          width: 60%;\n" +
     "          height: 75%;\n" +
     "          top: 8%;\n" +

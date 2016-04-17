@@ -6,7 +6,9 @@
         };
         socket.on("connect", function() {
             console.info("Websocket Connection Established");
-            socket.emit("who", "client");
+            socket.emit("who", {
+                type: "client"
+            });
         });
         return factory;
     } ]);
